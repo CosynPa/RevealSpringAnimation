@@ -14,7 +14,7 @@ struct ContentView: View {
         return layer.convert(CGPoint.zero, to: nil).x
     }
 
-    @State var parameter = SpringParameter.spring()
+    @State var parameter = SpringParameter()
     @State var offset = false
 
     var body: some View {
@@ -26,6 +26,7 @@ struct ContentView: View {
                 recorder.endRecord()
             }
             Button("Animate") {
+                Animation.spring()
                 offset.toggle()
             }
             PropertyRecordView<CGFloat>(recorder: recorder)
