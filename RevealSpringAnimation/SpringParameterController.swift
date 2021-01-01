@@ -110,6 +110,9 @@ struct SpringParameterController: View {
                     Text(title)
                     Text(String(format: "%.2f", property.wrappedValue))
                     Slider(value: property, in: range)
+                        .onChange(of: property.wrappedValue) { value in
+                            property.wrappedValue = (value * 100).rounded() / 100
+                        }
                 }
             }
         }
