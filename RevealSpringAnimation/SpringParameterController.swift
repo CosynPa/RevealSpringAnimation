@@ -117,7 +117,6 @@ struct SpringParameterController: View {
             }
         }
         .background(textWidthView)
-        .padding()
     }
 }
 

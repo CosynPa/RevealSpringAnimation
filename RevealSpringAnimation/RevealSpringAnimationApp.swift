@@ -11,7 +11,7 @@ import SwiftUI
 struct RevealSpringAnimationApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RecordController()
         }
     }
 }
