@@ -18,24 +18,32 @@ struct ContentView: View {
     @State var offset = false
 
     var body: some View {
-        VStack {
-            Button("Start") {
-                recorder.startRecord()
-            }
-            Button("End") {
-                recorder.endRecord()
-            }
-            Button("Animate") {
-                Animation.spring()
-                offset.toggle()
-            }
-            PropertyRecordView<CGFloat>(recorder: recorder)
-                .frame(width: 100, height: 100)
-                .background(Color.yellow)
-                .offset(x: offset ? 100 : 0)
-                .onReceive(recorder.$record) { record in
-                    print(record)
+        ZStack(alignment: .top) {
+            Color.clear
+            VStack {
+                SpringParameterController(parameter: $parameter)
+
+                Divider()
+
+                Button("Animate") {
+                    recorder.startRecord()
+                    withAnimation(parameter.animation) {
+                        offset.toggle()
+                    }
                 }
+
+                Button("Stop Record") {
+                    recorder.endRecord()
+                }
+
+                PropertyRecordView<CGFloat>(recorder: recorder)
+                    .frame(width: 100, height: 100)
+                    .background(Color.yellow)
+                    .offset(x: offset ? 100 : 0)
+                    .onReceive(recorder.$record) { record in
+                        print(record)
+                    }
+            }
         }
     }
 }
