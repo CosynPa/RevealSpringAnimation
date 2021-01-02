@@ -26,9 +26,6 @@ struct PropertyRecordView<RecordingValue>: UIViewRepresentable {
 }
 
 class PropertyRecorder<RecordingValue>: ObservableObject {
-    var recordInterval: TimeInterval
-    var tolerance: TimeInterval
-
     // When calls this function, it should return the current value that you want to record
     var recording: (UIView) -> RecordingValue
 
@@ -37,34 +34,59 @@ class PropertyRecorder<RecordingValue>: ObservableObject {
     // Provided by PropertyRecordView, the user should not directly set this property
     fileprivate var view: UIView?
 
-    private let endSubject = PassthroughSubject<Void, Never>()
-
-    init(recordInterval: TimeInterval = 0.001, tolerance: TimeInterval = 0.0005, recording: @escaping (UIView) -> RecordingValue) {
-        self.recordInterval = recordInterval
-        self.tolerance = tolerance
+    init(recording: @escaping (UIView) -> RecordingValue) {
         self.recording = recording
     }
 
-    func startRecord() {
-        let start = CACurrentMediaTime()
+    private var start: CFTimeInterval = CACurrentMediaTime()
+    private var recordingValues: [(TimeInterval, RecordingValue)] = []
+    private var recordingLink: AutoInvalidatingDisplayLink?
 
-        Timer.publish(every: recordInterval, tolerance: tolerance, on: .main, in: .default)
-            .autoconnect()
-            .map { _ in CACurrentMediaTime() - start }
-            .prepend(0.0)
-            .prefix(untilOutputFrom: endSubject)
-            .compactMap { [weak self] (time) -> (CFTimeInterval, RecordingValue)? in
-                if let self = self, let view = self.view {
-                    return (time, self.recording(view))
-                } else {
-                    return nil
-                }
-            }
-            .collect()
-            .assign(to: &$record)
+    func startRecord() {
+        endRecord()
+
+        start = CACurrentMediaTime()
+        recordingValues = []
+        recordingLink = AutoInvalidatingDisplayLink()
+
+        guard let view = view else {
+            NSLog("Warning the `view` property is not set")
+            return
+        }
+
+        recordingValues.append((0.0, recording(view)))
+
+        recordingLink!.callback = { [weak self] _ in
+            self?.recordCurrentValue()
+        }
     }
 
     func endRecord() {
-        endSubject.send()
+        if recordingLink != nil {
+            recordingLink = nil
+
+            record = recordingValues
+
+            recordingValues = []
+        } else {
+            // Not recording, do nothing
+        }
+    }
+
+    private func recordCurrentValue() {
+        guard let view = view else {
+            NSLog("Warning the `view` property is not set")
+            return
+        }
+
+        guard let recordingLink = recordingLink else {
+            NSLog("recordingLink` is invalid")
+            return
+        }
+
+        let now = recordingLink.link.targetTimestamp // TODO: is it correct to use `targetTimestamp`?
+        let value = recording(view)
+
+        recordingValues.append((now - start, value))
     }
 }
