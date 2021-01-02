@@ -84,7 +84,7 @@ class PropertyRecorder<RecordingValue>: ObservableObject {
             return
         }
 
-        let now = recordingLink.link.targetTimestamp // TODO: is it correct to use `targetTimestamp`?
+        let now = recordingLink.link.timestamp
         let value = recording(view)
 
         recordingValues.append((now - start, value))
