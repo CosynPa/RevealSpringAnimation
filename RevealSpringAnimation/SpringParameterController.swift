@@ -108,10 +108,10 @@ struct SpringParameterController: View {
                 ForEach(parameterSettings, id: \.0) { setting in
                     let (title, range, property) = setting
                     Text(title)
-                    Text(String(format: "%.2f", property.wrappedValue))
+                    Text(String(format: "%.3f", property.wrappedValue))
                     Slider(value: property, in: range)
                         .onChange(of: property.wrappedValue) { value in
-                            property.wrappedValue = (value * 100).rounded() / 100
+                            property.wrappedValue = (value * 1000).rounded() / 1000
                         }
                 }
             }
