@@ -27,7 +27,7 @@ struct SpringParameter {
         var initialVelocity: Double = 0.0
     }
 
-    struct UIKitSrping {
+    struct UIKitSpring {
         var duration: Double = 0.5
         var dampingRatio: Double = 1.0
     }
@@ -40,7 +40,7 @@ struct SpringParameter {
 
     var springValue = Spring()
     var interpolatingSpringValue = InterpolatingSpring()
-    var uikitValue = UIKitSrping()
+    var uikitValue = UIKitSpring()
 
     func animation() throws -> Animation   {
         switch type {
