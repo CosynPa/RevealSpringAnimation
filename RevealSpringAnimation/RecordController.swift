@@ -50,6 +50,21 @@ class RecordControllerVM: ObservableObject {
         state = newState
     }
 
+    func onReset() {
+        let newState: RecordingState
+
+        switch state {
+        case .recording:
+            handleStop()
+            fallthrough
+        case .idle:
+            newState = .idle
+            handleReset()
+        }
+
+        state = newState
+    }
+
     private func onStopTime(_ id: UUID) {
         let newState: RecordingState
 
@@ -84,6 +99,10 @@ class RecordControllerVM: ObservableObject {
     private func handleStop() {
         recorder.endRecord()
     }
+
+    private func handleReset() {
+        offset = false
+    }
 }
 
 struct RecordController: View {
@@ -108,6 +127,10 @@ struct RecordController: View {
 
                 Button("Animate") {
                     vm.onStart()
+                }
+
+                Button("Reset") {
+                    vm.onReset()
                 }
 
                 HStack {
