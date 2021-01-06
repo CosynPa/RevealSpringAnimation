@@ -90,3 +90,82 @@ class PropertyRecorder<RecordingValue>: ObservableObject {
         recordingValues.append((now - start, value))
     }
 }
+
+class UIAnimationController<RecordingValue> {
+    var recorder: PropertyRecorder<RecordingValue>?
+
+    private var offset: Bool
+    fileprivate var view: UIKitAnimationView? {
+        didSet {
+            view?.offset.constant = offset ? 100 : 0
+        }
+    }
+
+    init(recorder: PropertyRecorder<RecordingValue>?, offset: Bool) {
+        self.recorder = recorder
+        self.offset = offset
+    }
+
+    func setOffset(_ newOffset: Bool, animator: UIViewPropertyAnimator?) {
+        offset = newOffset
+
+        guard let view = view else { return }
+
+        if let animator = animator {
+            animator.addAnimations { [self] () in
+                view.offset.constant = offset ? 100 : 0
+                view.setNeedsLayout()
+                view.layoutIfNeeded()
+            }
+            animator.startAnimation()
+        } else {
+            view.offset.constant = offset ? 100 : 0
+        }
+    }
+}
+
+struct UIAnimationView<RecordingValue>: UIViewRepresentable {
+    var controller: UIAnimationController<RecordingValue>
+
+    func makeUIView(context: Context) -> UIKitAnimationView {
+        let view = UIKitAnimationView()
+        controller.recorder?.view = view.square
+        controller.view = view
+        return view
+   }
+
+    func updateUIView(_ uiView: UIKitAnimationView, context: Context) {
+
+    }
+}
+
+class UIKitAnimationView: UIView {
+    var offset: NSLayoutConstraint!
+    var square: UIView!
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        commonInit()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        commonInit()
+    }
+
+    func commonInit() {
+        square = UIView()
+        square.translatesAutoresizingMaskIntoConstraints = false
+        square.backgroundColor = #colorLiteral(red: 0.9960784314, green: 0.7607843137, blue: 0.03921568627, alpha: 1)
+
+        addSubview(square)
+
+        offset = square.leadingAnchor.constraint(equalTo: leadingAnchor)
+
+        NSLayoutConstraint.activate([
+            square.widthAnchor.constraint(equalToConstant: 100),
+            square.heightAnchor.constraint(equalToConstant: 100),
+            offset
+        ])
+    }
+}

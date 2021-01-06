@@ -11,25 +11,69 @@ struct SpringParameter {
     enum SpringType: Hashable {
         case spring
         case interpolatingSpring
+        case uikit
+    }
+
+    struct Spring {
+        var response: Double = 0.55
+        var dampingFraction: Double = 0.825
+        var blendDuration: Double = 0
+    }
+
+    struct InterpolatingSpring {
+        var mass: Double = 1.0
+        var stiffness: Double = 1.0
+        var damping: Double = 1.0
+        var initialVelocity: Double = 0.0
+    }
+
+    struct UIKitSrping {
+        var duration: Double = 0.5
+        var dampingRatio: Double = 1.0
+    }
+
+    struct TypeMissmatchError: Error {
+        var message: String
     }
 
     var type = SpringType.spring
 
-    var response: Double = 0.55
-    var dampingFraction: Double = 0.825
-    var blendDuration: Double = 0
+    var springValue = Spring()
+    var interpolatingSpringValue = InterpolatingSpring()
+    var uikitValue = UIKitSrping()
 
-    var mass: Double = 1.0
-    var stiffness: Double = 1.0
-    var damping: Double = 1.0
-    var initialVelocity: Double = 0.0
-
-    var animation: Animation {
+    func animation() throws -> Animation   {
         switch type {
         case .spring:
-            return .spring(response: response, dampingFraction: dampingFraction, blendDuration: blendDuration)
+            return .spring(
+                response: springValue.response,
+                dampingFraction: springValue.dampingFraction,
+                blendDuration: springValue.blendDuration
+            )
         case .interpolatingSpring:
-            return .interpolatingSpring(mass: mass, stiffness: stiffness, damping: damping, initialVelocity: initialVelocity)
+            return .interpolatingSpring(
+                mass: interpolatingSpringValue.mass,
+                stiffness: interpolatingSpringValue.stiffness,
+                damping: interpolatingSpringValue.damping,
+                initialVelocity: interpolatingSpringValue.initialVelocity
+            )
+        case .uikit:
+            throw TypeMissmatchError(message: "No animation for uikit type")
+        }
+    }
+
+    func uikitAnimator() throws -> UIViewPropertyAnimator {
+        switch type {
+        case .spring:
+            throw TypeMissmatchError(message: "No uikitAnimator for spring type")
+        case .interpolatingSpring:
+            throw TypeMissmatchError(message: "No uikitAnimator for interpolatingSpring type")
+        case .uikit:
+            return UIViewPropertyAnimator(
+                duration: uikitValue.duration,
+                dampingRatio: CGFloat(uikitValue.dampingRatio),
+                animations: nil
+            )
         }
     }
 }
@@ -58,18 +102,24 @@ struct SpringParameterController: View {
     }
 
     var parameterSettings: [(String, ClosedRange<Double>, unit: Double, Binding<Double>)] {
-        if case .spring = parameter.type {
+        switch parameter.type {
+        case .spring:
             return [
-                ("Response", 0.05 ... 20.00, 0.05, $parameter.response),
-                ("Damping Fraction", 0.0 ... 5.0, 0.025, $parameter.dampingFraction),
-                ("Blend Duration", 0.0 ... 2.0, 0.1, $parameter.blendDuration)
+                ("Response", 0.0 ... 20.00, 0.05, $parameter.springValue.response),
+                ("Damping Fraction", 0.0 ... 5.0, 0.025, $parameter.springValue.dampingFraction),
+                ("Blend Duration", 0.0 ... 2.0, 0.1, $parameter.springValue.blendDuration)
             ]
-        } else {
+        case .interpolatingSpring:
             return [
-                ("Mass", 0.1 ... 10.0, 0.1, $parameter.mass),
-                ("Stiffness", 0.1 ... 10.0, 0.1, $parameter.stiffness),
-                ("Damping", 0.0 ... 5.0, 0.1, $parameter.damping),
-                ("Initial Velocity", -10.0 ... 10.0, 0.1, $parameter.initialVelocity)
+                ("Mass", 0.1 ... 10.0, 0.1, $parameter.interpolatingSpringValue.mass),
+                ("Stiffness", 0.1 ... 10.0, 0.1, $parameter.interpolatingSpringValue.stiffness),
+                ("Damping", 0.0 ... 5.0, 0.1, $parameter.interpolatingSpringValue.damping),
+                ("Initial Velocity", -10.0 ... 10.0, 0.1, $parameter.interpolatingSpringValue.initialVelocity)
+            ]
+        case .uikit:
+            return [
+                ("Duration", 0.0 ... 10.0, 0.1, $parameter.uikitValue.duration),
+                ("Damping Ratio", 0.0 ... 5.0, 0.025, $parameter.uikitValue.dampingRatio)
             ]
         }
     }
@@ -101,6 +151,8 @@ struct SpringParameterController: View {
                     .tag(SpringParameter.SpringType.spring)
                 Text("Interpolating Spring")
                     .tag(SpringParameter.SpringType.interpolatingSpring)
+                Text("UIKit")
+                    .tag(SpringParameter.SpringType.uikit)
             }
             .pickerStyle(SegmentedPickerStyle())
 

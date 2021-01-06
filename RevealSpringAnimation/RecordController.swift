@@ -25,6 +25,10 @@ class RecordControllerVM: ObservableObject {
         return layer.convert(CGPoint.zero, to: nil).x
     }
 
+    lazy var uikitController: UIAnimationController<CGFloat> = { (self) in
+        return UIAnimationController(recorder: self.recorder, offset: self.offset)
+    }(self)
+
     private var bag = Set<AnyCancellable>()
 
     init() {
@@ -87,8 +91,25 @@ class RecordControllerVM: ObservableObject {
     private func handleStart(_ id: UUID) {
         recorder.startRecord()
 
-        withAnimation(parameter.animation) {
-            offset.toggle()
+        do {
+            switch parameter.type {
+            case .spring, .interpolatingSpring:
+                withAnimation(try parameter.animation()) {
+                    offset.toggle()
+                    // synchronize
+                    uikitController.setOffset(offset, animator: nil)
+                }
+            case .uikit:
+                try withAnimation {
+                    offset.toggle()
+                    uikitController.setOffset(offset, animator: try parameter.uikitAnimator())
+                }
+            }
+        } catch let error as SpringParameter.TypeMissmatchError {
+            print("Error:")
+            print(error.message)
+        } catch {
+
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + recordDuration) { [weak self] () in
@@ -102,6 +123,7 @@ class RecordControllerVM: ObservableObject {
 
     private func handleReset() {
         offset = false
+        uikitController.setOffset(offset, animator: nil)
     }
 }
 
@@ -133,19 +155,24 @@ struct RecordController: View {
                     vm.onReset()
                 }
 
-                HStack {
-                    PropertyRecordView<CGFloat>(recorder: vm.recorder)
-                        .frame(width: 100, height: 100)
-                        .background(Color.yellow)
-                        .offset(x: vm.offset ? 100 : 0)
-                        .onReceive(vm.recorder.$record) { record in
-                            print(record)
-                        }
-
-                    Spacer()
+                switch vm.parameter.type {
+                case .spring, .interpolatingSpring:
+                    HStack {
+                        PropertyRecordView<CGFloat>(recorder: vm.recorder)
+                            .frame(width: 100, height: 100)
+                            .background(Color.yellow)
+                            .offset(x: vm.offset ? 100 : 0)
+                        Spacer()
+                    }
+                case .uikit:
+                    UIAnimationView(controller: vm.uikitController)
+                        .frame(height: 100)
                 }
             }
             .padding()
+            .onReceive(vm.recorder.$record) { record in
+                print(record)
+            }
         }
     }
 }
