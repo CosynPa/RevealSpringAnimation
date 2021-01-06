@@ -57,19 +57,19 @@ struct SpringParameterController: View {
         ]
     }
 
-    var parameterSettings: [(String, ClosedRange<Double>, Binding<Double>)] {
+    var parameterSettings: [(String, ClosedRange<Double>, unit: Double, Binding<Double>)] {
         if case .spring = parameter.type {
             return [
-                ("Response", 0.01 ... 2.00, $parameter.response),
-                ("Damping Fraction", 0.0 ... 2.0, $parameter.dampingFraction),
-                ("Blend Duration", 0.0 ... 2.0, $parameter.blendDuration)
+                ("Response", 0.05 ... 20.00, 0.05, $parameter.response),
+                ("Damping Fraction", 0.0 ... 5.0, 0.025, $parameter.dampingFraction),
+                ("Blend Duration", 0.0 ... 2.0, 0.1, $parameter.blendDuration)
             ]
         } else {
             return [
-                ("Mass", 0.1 ... 2.0, $parameter.mass),
-                ("Stiffness", 0.1 ... 5.0, $parameter.stiffness),
-                ("Damping", 0.01 ... 5.0, $parameter.damping),
-                ("Initial Velocity", -5.0 ... 5.0, $parameter.initialVelocity)
+                ("Mass", 0.1 ... 10.0, 0.1, $parameter.mass),
+                ("Stiffness", 0.1 ... 10.0, 0.1, $parameter.stiffness),
+                ("Damping", 0.0 ... 5.0, 0.1, $parameter.damping),
+                ("Initial Velocity", -10.0 ... 10.0, 0.1, $parameter.initialVelocity)
             ]
         }
     }
@@ -106,12 +106,12 @@ struct SpringParameterController: View {
 
             LazyVGrid(columns: columns) {
                 ForEach(parameterSettings, id: \.0) { setting in
-                    let (title, range, property) = setting
+                    let (title, range, unit, property) = setting
                     Text(title)
                     Text(String(format: "%.3f", property.wrappedValue))
                     Slider(value: property, in: range)
                         .onChange(of: property.wrappedValue) { value in
-                            property.wrappedValue = (value * 1000).rounded() / 1000
+                            property.wrappedValue = (value / unit).rounded() * unit
                         }
                 }
             }
