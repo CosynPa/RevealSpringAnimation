@@ -154,7 +154,7 @@ struct SpringParameterController: View {
                 Text("UIKit")
                     .tag(SpringParameter.SpringType.uikit)
             }
-            .pickerStyle(SegmentedPickerStyle())
+            .pickerStyle(WheelPickerStyle())
 
             LazyVGrid(columns: columns) {
                 ForEach(parameterSettings, id: \.0) { setting in
