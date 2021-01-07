@@ -21,7 +21,10 @@ class RecordControllerVM: ObservableObject {
     @Published var offset = false
 
     var recorder = PropertyRecorder<CGFloat> { (view) -> CGFloat in
-        let layer = view.layer.presentation()!
+        guard let layer = view.layer.presentation() else {
+            // Can happen when the view is off screen
+            return 0
+        }
         return layer.convert(CGPoint.zero, to: nil).x
     }
 
