@@ -97,7 +97,7 @@ class UIAnimationController<RecordingValue> {
     private var offset: Bool
     fileprivate var view: UIKitAnimationView? {
         didSet {
-            view?.offset.constant = offset ? 100 : 0
+            view?.offset = offset
         }
     }
 
@@ -113,13 +113,11 @@ class UIAnimationController<RecordingValue> {
 
         if let animator = animator {
             animator.addAnimations { [self] () in
-                view.offset.constant = offset ? 100 : 0
-                view.setNeedsLayout()
-                view.layoutIfNeeded()
+                view.offset = offset
             }
             animator.startAnimation()
         } else {
-            view.offset.constant = offset ? 100 : 0
+            view.offset = offset
         }
     }
 }
@@ -140,7 +138,12 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
 }
 
 class UIKitAnimationView: UIView {
-    var offset: NSLayoutConstraint!
+    var offset: Bool = false {
+        didSet {
+            square.frame = CGRect(x: offset ? 100 : 0, y: 0, width: 100, height: 100)
+        }
+    }
+
     var square: UIView!
 
     override init(frame: CGRect) {
@@ -155,17 +158,10 @@ class UIKitAnimationView: UIView {
 
     func commonInit() {
         square = UIView()
-        square.translatesAutoresizingMaskIntoConstraints = false
         square.backgroundColor = #colorLiteral(red: 0.9960784314, green: 0.7607843137, blue: 0.03921568627, alpha: 1)
 
         addSubview(square)
 
-        offset = square.leadingAnchor.constraint(equalTo: leadingAnchor)
-
-        NSLayoutConstraint.activate([
-            square.widthAnchor.constraint(equalToConstant: 100),
-            square.heightAnchor.constraint(equalToConstant: 100),
-            offset
-        ])
+        square.frame = CGRect(x: offset ? 100 : 0, y: 0, width: 100, height: 100)
     }
 }
