@@ -14,23 +14,30 @@ enum RecordingState {
 }
 
 class RecordControllerVM: ObservableObject {
-    var state = RecordingState.idle
+    let recorder: PropertyRecorder<CGFloat>
+    let uikitController: UIAnimationController<CGFloat>
 
-    @Published var parameter = SpringParameter()
-    @Published var recordDuration = 2.0
-    @Published var offset = false
-
-    var recorder = PropertyRecorder<CGFloat> { (view) -> CGFloat in
-        guard let layer = view.layer.presentation() else {
-            // Can happen when the view is off screen
-            return 0
+    init() {
+        recorder = PropertyRecorder<CGFloat> { (view) -> CGFloat in
+            guard let layer = view.layer.presentation() else {
+                // Can happen when the view is off screen
+                return 0
+            }
+            return layer.convert(CGPoint.zero, to: nil).x
         }
-        return layer.convert(CGPoint.zero, to: nil).x
-    }
 
-    lazy var uikitController: UIAnimationController<CGFloat> = { (self) in
-        return UIAnimationController(recorder: self.recorder, offset: self.offset)
-    }(self)
+        uikitController = UIAnimationController(recorder: recorder, offset: false)
+    }
+}
+
+struct RecordController: View {
+    @State var state = RecordingState.idle
+
+    @State var parameter = SpringParameter()
+    @State var recordDuration = 2.0
+    @State var offset = false
+
+    @StateObject var vm = RecordControllerVM()
 
     func onStart() {
         let newState: RecordingState
@@ -83,7 +90,7 @@ class RecordControllerVM: ObservableObject {
     }
 
     private func handleStart(_ id: UUID) {
-        recorder.startRecord()
+        vm.recorder.startRecord()
 
         do {
             switch parameter.type {
@@ -91,12 +98,12 @@ class RecordControllerVM: ObservableObject {
                 withAnimation(try parameter.animation()) {
                     offset.toggle()
                     // synchronize
-                    uikitController.setOffset(offset, animator: nil)
+                    vm.uikitController.setOffset(offset, animator: nil)
                 }
             case .uikit:
                 try withAnimation {
                     offset.toggle()
-                    uikitController.setOffset(offset, animator: try parameter.uikitAnimator())
+                    vm.uikitController.setOffset(offset, animator: try parameter.uikitAnimator())
                 }
             }
         } catch let error as SpringParameter.TypeMissmatchError {
@@ -106,56 +113,52 @@ class RecordControllerVM: ObservableObject {
 
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + recordDuration) { [weak self] () in
-            self?.onStopTime(id)
+        DispatchQueue.main.asyncAfter(deadline: .now() + recordDuration) { () in
+            onStopTime(id)
         }
     }
 
     private func handleStop() {
-        recorder.endRecord()
+        vm.recorder.endRecord()
     }
 
     private func handleReset() {
         offset = false
-        uikitController.setOffset(offset, animator: nil)
+        vm.uikitController.setOffset(offset, animator: nil)
     }
-}
-
-struct RecordController: View {
-    @StateObject var vm = RecordControllerVM()
 
     var body: some View {
         ZStack(alignment: .top) {
             Color.clear
             VStack {
-                SpringParameterController(parameter: $vm.parameter)
+                SpringParameterController(parameter: $parameter)
 
                 Divider()
 
                 HStack {
                     Text("Record Duration")
-                    Text(String(format: "%.1f", vm.recordDuration))
+                    Text(String(format: "%.1f", recordDuration))
                         .frame(width: 60, alignment: .trailing)
-                    Slider(value: $vm.recordDuration, in: 0.1 ... 10.0)
+                    Slider(value: $recordDuration, in: 0.1 ... 10.0)
                 }
 
                 Divider()
 
                 Button("Animate") {
-                    vm.onStart()
+                    onStart()
                 }
 
                 Button("Reset") {
-                    vm.onReset()
+                    onReset()
                 }
 
-                switch vm.parameter.type {
+                switch parameter.type {
                 case .spring, .interpolatingSpring:
                     HStack {
                         PropertyRecordView<CGFloat>(recorder: vm.recorder)
                             .frame(width: 100, height: 100)
                             .background(Color.yellow)
-                            .offset(x: vm.offset ? 100 : 0)
+                            .offset(x: offset ? 100 : 0)
                         Spacer()
                     }
                 case .uikit:
