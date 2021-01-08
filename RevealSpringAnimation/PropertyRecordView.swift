@@ -25,7 +25,7 @@ struct PropertyRecordView<RecordingValue>: UIViewRepresentable {
     }
 }
 
-class PropertyRecorder<RecordingValue>: ObservableObject {
+class PropertyRecorder<RecordingValue> {
     // When calls this function, it should return the current value that you want to record
     var recording: (UIView) -> RecordingValue
 

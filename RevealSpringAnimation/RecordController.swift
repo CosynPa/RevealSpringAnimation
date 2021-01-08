@@ -32,15 +32,6 @@ class RecordControllerVM: ObservableObject {
         return UIAnimationController(recorder: self.recorder, offset: self.offset)
     }(self)
 
-    private var bag = Set<AnyCancellable>()
-
-    init() {
-        recorder.objectWillChange.sink { [weak self] () in
-            self?.objectWillChange.send()
-        }
-        .store(in: &bag)
-    }
-
     func onStart() {
         let newState: RecordingState
 
