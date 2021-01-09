@@ -30,7 +30,7 @@ class RecordControllerVM: ObservableObject {
     }
 }
 
-struct RecordController {
+struct RecordController: View {
     @State var state = RecordingState.notRecording
 
     @State var parameter = SpringParameter()
@@ -155,9 +155,7 @@ struct RecordController {
 
         vm.uikitController.setOffset(newOffset, animator: nil)
     }
-}
 
-extension RecordController: View {
     var body: some View {
         ZStack(alignment: .top) {
             Color.clear
