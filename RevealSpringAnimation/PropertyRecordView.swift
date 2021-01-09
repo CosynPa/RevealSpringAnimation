@@ -97,7 +97,7 @@ class UIAnimationController<RecordingValue> {
     private var offset: Bool
     fileprivate var view: UIKitAnimationView? {
         didSet {
-            view?.offset = offset
+            setOffset(offset, animator: nil)
         }
     }
 
@@ -106,18 +106,41 @@ class UIAnimationController<RecordingValue> {
         self.offset = offset
     }
 
-    func setOffset(_ newOffset: Bool, animator: UIViewPropertyAnimator?) {
+    func setOffset(_ newOffset: Bool, animator: Either<UIViewPropertyAnimator, CASpringAnimation>?) {
         offset = newOffset
 
         guard let view = view else { return }
 
         if let animator = animator {
-            animator.addAnimations { [self] () in
-                view.offset = offset
+            switch animator {
+            case .left(let uikitAnimator):
+                view.animator?.stopAnimation(false)
+                view.animator = nil
+
+                uikitAnimator.addAnimations { [self] () in
+                    view.square.frame = CGRect(x: offset ? 100 : 0, y: 0, width: 100, height: 100)
+                }
+                uikitAnimator.startAnimation()
+
+                view.animator = uikitAnimator
+            case .right(let caAnimator):
+                caAnimator.keyPath = #keyPath(CALayer.position)
+
+                caAnimator.fromValue = view.square.layer.position
+
+                let newPosition = CGPoint(x: offset ? 150 : 50, y: 50)
+                caAnimator.toValue = newPosition
+
+                view.square.layer.add(caAnimator, forKey: "spring")
+
+                view.square.layer.position = newPosition
             }
-            animator.startAnimation()
         } else {
-            view.offset = offset
+            view.animator?.stopAnimation(false)
+            view.animator = nil
+
+            view.square.layer.removeAnimation(forKey: "spring")
+            view.square.frame = CGRect(x: offset ? 100 : 0, y: 0, width: 100, height: 100)
         }
     }
 }
@@ -130,7 +153,7 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
         controller.recorder?.view = view.square
         controller.view = view
         return view
-   }
+    }
 
     func updateUIView(_ uiView: UIKitAnimationView, context: Context) {
 
@@ -138,13 +161,8 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
 }
 
 class UIKitAnimationView: UIView {
-    var offset: Bool = false {
-        didSet {
-            square.frame = CGRect(x: offset ? 100 : 0, y: 0, width: 100, height: 100)
-        }
-    }
-
     var square: UIView!
+    var animator: UIViewPropertyAnimator?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -161,7 +179,5 @@ class UIKitAnimationView: UIView {
         square.backgroundColor = #colorLiteral(red: 0.9960784314, green: 0.7607843137, blue: 0.03921568627, alpha: 1)
 
         addSubview(square)
-
-        square.frame = CGRect(x: offset ? 100 : 0, y: 0, width: 100, height: 100)
     }
 }

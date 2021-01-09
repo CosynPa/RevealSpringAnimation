@@ -6,12 +6,27 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct SpringParameter {
-    enum SpringType: Hashable {
+    enum SpringType: Hashable, CaseIterable {
         case spring
         case interpolatingSpring
         case uikit
+        case coreAnimation
+
+        var name: LocalizedStringKey {
+            switch self {
+            case .spring:
+                return "Spring"
+            case .interpolatingSpring:
+                return "Interpolating Spring"
+            case .uikit:
+                return "UIKit"
+            case .coreAnimation:
+                return "Core Animation"
+            }
+        }
     }
 
     struct Spring {
@@ -32,6 +47,13 @@ struct SpringParameter {
         var dampingRatio: Double = 1.0
     }
 
+    struct CASpring {
+        var mass: Double = 1.0
+        var stiffness: Double = 1.0
+        var damping: Double = 1.0
+        var initialVelocity: Double = 0.0
+    }
+
     struct TypeMissmatchError: Error {
         var message: String
     }
@@ -41,6 +63,7 @@ struct SpringParameter {
     var springValue = Spring()
     var interpolatingSpringValue = InterpolatingSpring()
     var uikitValue = UIKitSpring()
+    var caValue = CASpring()
 
     func animation() throws -> Animation   {
         switch type {
@@ -59,6 +82,8 @@ struct SpringParameter {
             )
         case .uikit:
             throw TypeMissmatchError(message: "No animation for uikit type")
+        case .coreAnimation:
+            throw TypeMissmatchError(message: "No animation for coreAnimation type")
         }
     }
 
@@ -74,6 +99,28 @@ struct SpringParameter {
                 dampingRatio: CGFloat(uikitValue.dampingRatio),
                 animations: nil
             )
+        case .coreAnimation:
+            throw TypeMissmatchError(message: "No uikitAnimator for coreAnimation type")
+        }
+    }
+
+    func caAnimation() throws -> CASpringAnimation {
+        switch type {
+        case .spring:
+            throw TypeMissmatchError(message: "No caAnimation for spring type")
+        case .interpolatingSpring:
+            throw TypeMissmatchError(message: "No caAnimation for interpolatingSpring type")
+        case .uikit:
+            throw TypeMissmatchError(message: "No caAnimation for uikit type")
+        case .coreAnimation:
+            let animation = CASpringAnimation()
+            animation.mass = CGFloat(caValue.mass)
+            animation.stiffness = CGFloat(caValue.stiffness)
+            animation.damping = CGFloat(caValue.damping)
+            animation.initialVelocity = CGFloat(caValue.initialVelocity)
+
+            animation.duration = animation.settlingDuration
+            return animation
         }
     }
 }
@@ -121,6 +168,13 @@ struct SpringParameterController: View {
                 ("Duration", 0.0 ... 10.0, 0.1, $parameter.uikitValue.duration),
                 ("Damping Ratio", 0.0 ... 5.0, 0.025, $parameter.uikitValue.dampingRatio)
             ]
+        case .coreAnimation:
+            return [
+                ("Mass", 0.1 ... 10.0, 0.1, $parameter.caValue.mass),
+                ("Stiffness", 0.1 ... 10.0, 0.1, $parameter.caValue.stiffness),
+                ("Damping", 0.0 ... 5.0, 0.1, $parameter.caValue.damping),
+                ("Initial Velocity", -10.0 ... 10.0, 0.1, $parameter.caValue.initialVelocity)
+            ]
         }
     }
 
@@ -147,12 +201,9 @@ struct SpringParameterController: View {
     var body: some View {
         VStack {
             Picker("Type", selection: $parameter.type) {
-                Text("Spring")
-                    .tag(SpringParameter.SpringType.spring)
-                Text("Interpolating Spring")
-                    .tag(SpringParameter.SpringType.interpolatingSpring)
-                Text("UIKit")
-                    .tag(SpringParameter.SpringType.uikit)
+                ForEach(SpringParameter.SpringType.allCases, id: \.self) { type in
+                    Text(type.name)
+                }
             }
             .pickerStyle(WheelPickerStyle())
 
