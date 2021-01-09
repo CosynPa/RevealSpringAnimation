@@ -10,7 +10,7 @@ import Combine
 
 enum RecordingState {
     case recording(AnyCancellable)
-    case idle
+    case notRecording  // Not this doesn't necessarily mean not animating
 }
 
 class RecordControllerVM: ObservableObject {
@@ -30,8 +30,8 @@ class RecordControllerVM: ObservableObject {
     }
 }
 
-struct RecordController: View {
-    @State var state = RecordingState.idle
+struct RecordController {
+    @State var state = RecordingState.notRecording
 
     @State var parameter = SpringParameter()
     @State var recordDuration = 2.0
@@ -47,7 +47,7 @@ struct RecordController: View {
             cancellable.cancel()
             handleStop()
             fallthrough
-        case .idle:
+        case .notRecording:
             let newCancellable = handleStart()
             newState = .recording(newCancellable)
         }
@@ -63,9 +63,26 @@ struct RecordController: View {
             cancellable.cancel()
             handleStop()
             fallthrough
-        case .idle:
-            newState = .idle
+        case .notRecording:
+            newState = .notRecording
             handleReset()
+        }
+
+        state = newState
+    }
+
+    // When the user switch to a different parameter type
+    func onSwitchType() {
+        let newState: RecordingState
+
+        switch state {
+        case .recording(let cancellable):
+            cancellable.cancel()
+            handleStop()
+            fallthrough
+        case .notRecording:
+            newState = .notRecording
+            handleSwitchType()
         }
 
         state = newState
@@ -75,11 +92,12 @@ struct RecordController: View {
         let newState: RecordingState
 
         switch state {
-        case .idle:
-            newState = .idle
+        case .notRecording:
+            newState = .notRecording
         case .recording:
+            // Normal stop, no need to cancel
             handleStop()
-            newState = .idle
+            newState = .notRecording
         }
 
         state = newState
@@ -121,15 +139,33 @@ struct RecordController: View {
     }
 
     private func handleReset() {
-        offset = false
-        vm.uikitController.setOffset(offset, animator: nil)
+        stopAnimation(newOffset: false)
     }
 
+    private func handleSwitchType() {
+        stopAnimation(newOffset: offset)
+    }
+
+    private func stopAnimation(newOffset: Bool) {
+        // A hack. Any existing animation will be overriden by setting the offset to a different value first and then setting back
+        offset = !newOffset
+        withAnimation(.linear(duration: 0)) {
+            offset = newOffset
+        }
+
+        vm.uikitController.setOffset(newOffset, animator: nil)
+    }
+}
+
+extension RecordController: View {
     var body: some View {
         ZStack(alignment: .top) {
             Color.clear
             VStack {
                 SpringParameterController(parameter: $parameter)
+                    .onChange(of: parameter.type) { _ in
+                        onSwitchType()
+                    }
 
                 Divider()
 
