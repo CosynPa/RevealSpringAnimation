@@ -101,10 +101,8 @@ struct RecordController: View {
                     vm.uikitController.setOffset(offset, animator: nil)
                 }
             case .uikit:
-                try withAnimation {
-                    offset.toggle()
-                    vm.uikitController.setOffset(offset, animator: try parameter.uikitAnimator())
-                }
+                offset.toggle()
+                vm.uikitController.setOffset(offset, animator: try parameter.uikitAnimator())
             }
         } catch let error as SpringParameter.TypeMissmatchError {
             print("Error:")
