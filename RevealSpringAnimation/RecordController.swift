@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 enum RecordingState {
-    case recording(UUID)
+    case recording(AnyCancellable)
     case idle
 }
 
@@ -43,13 +43,13 @@ struct RecordController: View {
         let newState: RecordingState
 
         switch state {
-        case .recording:
+        case .recording(let cancellable):
+            cancellable.cancel()
             handleStop()
             fallthrough
         case .idle:
-            let id = UUID()
-            newState = .recording(id)
-            handleStart(id)
+            let newCancellable = handleStart()
+            newState = .recording(newCancellable)
         }
 
         state = newState
@@ -59,7 +59,8 @@ struct RecordController: View {
         let newState: RecordingState
 
         switch state {
-        case .recording:
+        case .recording(let cancellable):
+            cancellable.cancel()
             handleStop()
             fallthrough
         case .idle:
@@ -70,26 +71,21 @@ struct RecordController: View {
         state = newState
     }
 
-    private func onStopTime(_ id: UUID) {
+    private func onStopTime() {
         let newState: RecordingState
 
         switch state {
         case .idle:
             newState = .idle
-        case .recording(let currentID):
-            if currentID == id {
-                handleStop()
-                newState = .idle
-            } else {
-                // Should already be stopped, reject
-                newState = state
-            }
+        case .recording:
+            handleStop()
+            newState = .idle
         }
 
         state = newState
     }
 
-    private func handleStart(_ id: UUID) {
+    private func handleStart() -> AnyCancellable {
         vm.recorder.startRecord()
 
         do {
@@ -114,9 +110,10 @@ struct RecordController: View {
 
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + recordDuration) { () in
-            onStopTime(id)
-        }
+        return Just(()).delay(for: .seconds(recordDuration), scheduler: RunLoop.main)
+            .sink { () in
+                onStopTime()
+            }
     }
 
     private func handleStop() {
