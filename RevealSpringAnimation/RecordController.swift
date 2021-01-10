@@ -191,19 +191,7 @@ struct RecordController: View {
                     onReset()
                 }
 
-                switch parameter.type {
-                case .spring, .interpolatingSpring:
-                    HStack {
-                        PropertyRecordView<CGFloat>(recorder: vm.recorder)
-                            .frame(width: 100, height: 100)
-                            .background(Color.yellow)
-                            .offset(x: offset ? 100 : 0)
-                        Spacer()
-                    }
-                case .uikit, .coreAnimation:
-                    UIAnimationView(controller: vm.uikitController)
-                        .frame(height: 100)
-                }
+                RecordCompareView(vm: vm, type: $parameter.type, offset: $offset)
             }
             .padding()
             .onReceive(vm.recorder.$record) { record in

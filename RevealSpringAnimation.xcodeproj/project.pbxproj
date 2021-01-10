@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7E1212CB25AB50260018189A /* RecordCompareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1212CA25AB50260018189A /* RecordCompareView.swift */; };
 		7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3BADFA258F0C4300F5D810 /* RevealSpringAnimationApp.swift */; };
 		7E3BADFD258F0C4300F5D810 /* RecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3BADFC258F0C4300F5D810 /* RecordController.swift */; };
 		7E3BADFF258F0C4E00F5D810 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BADFE258F0C4E00F5D810 /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7E1212CA25AB50260018189A /* RecordCompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCompareView.swift; sourceTree = "<group>"; };
 		7E3BADF7258F0C4300F5D810 /* RevealSpringAnimation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RevealSpringAnimation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E3BADFA258F0C4300F5D810 /* RevealSpringAnimationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealSpringAnimationApp.swift; sourceTree = "<group>"; };
 		7E3BADFC258F0C4300F5D810 /* RecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordController.swift; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 			children = (
 				7E3BADFA258F0C4300F5D810 /* RevealSpringAnimationApp.swift */,
 				7E3BADFC258F0C4300F5D810 /* RecordController.swift */,
+				7E1212CA25AB50260018189A /* RecordCompareView.swift */,
 				7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */,
 				7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */,
 				7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */,
@@ -153,6 +156,7 @@
 				7E3BADFD258F0C4300F5D810 /* RecordController.swift in Sources */,
 				7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */,
 				7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */,
+				7E1212CB25AB50260018189A /* RecordCompareView.swift in Sources */,
 				7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */,
 				7EC6EA0A25A60B7A00BD0F48 /* Either.swift in Sources */,
 				7E3BAE0B258F0D4F00F5D810 /* PropertyRecordView.swift in Sources */,
