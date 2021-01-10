@@ -26,6 +26,14 @@ struct PropertyRecordView<RecordingValue>: UIViewRepresentable {
 }
 
 class PropertyRecorder<RecordingValue> {
+    var shouldRecord = true {
+        didSet {
+            if !shouldRecord {
+                endRecord()
+            }
+        }
+    }
+
     // When calls this function, it should return the current value that you want to record
     var recording: (UIView) -> RecordingValue
 
@@ -44,6 +52,10 @@ class PropertyRecorder<RecordingValue> {
 
     func startRecord() {
         endRecord()
+
+        if !shouldRecord {
+            return
+        }
 
         start = CACurrentMediaTime()
         recordingValues = []

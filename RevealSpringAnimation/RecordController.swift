@@ -33,6 +33,8 @@ class RecordControllerVM: ObservableObject {
 struct RecordController: View {
     @State var state = RecordingState.notRecording
 
+    @State var shouldRecord = true
+
     @State var parameter = SpringParameter()
     @State var recordDuration = 2.0
     @State var offset = false
@@ -166,6 +168,11 @@ struct RecordController: View {
                     }
 
                 Divider()
+
+                Toggle("Record", isOn: $shouldRecord)
+                    .onChange(of: shouldRecord) { value in
+                        vm.recorder.shouldRecord = shouldRecord
+                    }
 
                 HStack {
                     Text("Record Duration")
