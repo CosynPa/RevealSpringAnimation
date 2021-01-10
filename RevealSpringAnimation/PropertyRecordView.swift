@@ -106,40 +106,42 @@ class UIAnimationController<RecordingValue> {
         self.offset = offset
     }
 
-    func setOffset(_ newOffset: Bool, animator: Either<UIViewPropertyAnimator, CASpringAnimation>?) {
+    func setOffset(_ newOffset: Bool, animator: Either<SpringParameter.UIKitSpring, SpringParameter.CASpring>?) {
         offset = newOffset
 
         guard let view = view else { return }
 
         if let animator = animator {
             switch animator {
-            case .left(let uikitAnimator):
-                view.animator?.stopAnimation(false)
-                view.animator = nil
-
-                uikitAnimator.addAnimations { [self] () in
-                    view.square.frame = CGRect(x: offset ? 100 : 0, y: 0, width: 100, height: 100)
+            case .left(let uiValue):
+                UIView.animate(withDuration: uiValue.duration,
+                               delay: 0,
+                               usingSpringWithDamping: CGFloat(uiValue.dampingRatio),
+                               initialSpringVelocity: CGFloat(uiValue.initialVelocity),
+                               options: []) { [self] () in
+                    view.square.frame = CGRect(x: self.offset ? 100 : 0, y: 0, width: 100, height: 100)
                 }
-                uikitAnimator.startAnimation()
+            case .right(let caValue):
+                let animation = CASpringAnimation()
 
-                view.animator = uikitAnimator
-            case .right(let caAnimator):
-                caAnimator.keyPath = #keyPath(CALayer.position)
+                animation.mass = CGFloat(caValue.mass)
+                animation.stiffness = CGFloat(caValue.stiffness)
+                animation.damping = CGFloat(caValue.damping)
+                animation.initialVelocity = CGFloat(caValue.initialVelocity)
 
-                caAnimator.fromValue = view.square.layer.position
+                animation.keyPath = #keyPath(CALayer.position)
+                animation.duration = animation.settlingDuration
+                animation.fromValue = view.square.layer.position
 
                 let newPosition = CGPoint(x: offset ? 150 : 50, y: 50)
-                caAnimator.toValue = newPosition
+                animation.toValue = newPosition
 
-                view.square.layer.add(caAnimator, forKey: "spring")
+                view.square.layer.add(animation, forKey: "spring")
 
                 view.square.layer.position = newPosition
             }
         } else {
-            view.animator?.stopAnimation(false)
-            view.animator = nil
-
-            view.square.layer.removeAnimation(forKey: "spring")
+            view.square.layer.removeAllAnimations()
             view.square.frame = CGRect(x: offset ? 100 : 0, y: 0, width: 100, height: 100)
         }
     }
@@ -162,7 +164,6 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
 
 class UIKitAnimationView: UIView {
     var square: UIView!
-    var animator: UIViewPropertyAnimator?
 
     override init(frame: CGRect) {
         super.init(frame: frame)

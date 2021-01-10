@@ -45,6 +45,7 @@ struct SpringParameter {
     struct UIKitSpring {
         var duration: Double = 0.5
         var dampingRatio: Double = 1.0
+        var initialVelocity: Double = 0.0
     }
 
     struct CASpring {
@@ -87,24 +88,20 @@ struct SpringParameter {
         }
     }
 
-    func uikitAnimator() throws -> UIViewPropertyAnimator {
+    func uikitAnimator() throws -> UIKitSpring {
         switch type {
         case .spring:
             throw TypeMissmatchError(message: "No uikitAnimator for spring type")
         case .interpolatingSpring:
             throw TypeMissmatchError(message: "No uikitAnimator for interpolatingSpring type")
         case .uikit:
-            return UIViewPropertyAnimator(
-                duration: uikitValue.duration,
-                dampingRatio: CGFloat(uikitValue.dampingRatio),
-                animations: nil
-            )
+            return uikitValue
         case .coreAnimation:
             throw TypeMissmatchError(message: "No uikitAnimator for coreAnimation type")
         }
     }
 
-    func caAnimation() throws -> CASpringAnimation {
+    func caAnimation() throws -> CASpring {
         switch type {
         case .spring:
             throw TypeMissmatchError(message: "No caAnimation for spring type")
@@ -113,14 +110,7 @@ struct SpringParameter {
         case .uikit:
             throw TypeMissmatchError(message: "No caAnimation for uikit type")
         case .coreAnimation:
-            let animation = CASpringAnimation()
-            animation.mass = CGFloat(caValue.mass)
-            animation.stiffness = CGFloat(caValue.stiffness)
-            animation.damping = CGFloat(caValue.damping)
-            animation.initialVelocity = CGFloat(caValue.initialVelocity)
-
-            animation.duration = animation.settlingDuration
-            return animation
+            return caValue
         }
     }
 }
@@ -166,7 +156,8 @@ struct SpringParameterController: View {
         case .uikit:
             return [
                 ("Duration", 0.0 ... 10.0, 0.1, $parameter.uikitValue.duration),
-                ("Damping Ratio", 0.0 ... 5.0, 0.025, $parameter.uikitValue.dampingRatio)
+                ("Damping Ratio", 0.0 ... 5.0, 0.025, $parameter.uikitValue.dampingRatio),
+                ("Initial Velocity", -10.0 ... 10.0, 0.1, $parameter.uikitValue.initialVelocity)
             ]
         case .coreAnimation:
             return [
