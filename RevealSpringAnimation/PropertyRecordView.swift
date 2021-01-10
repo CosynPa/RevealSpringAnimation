@@ -133,6 +133,13 @@ class UIAnimationController<RecordingValue> {
                                options: []) { [self] () in
                     view.square.frame = CGRect(x: self.offset ? 100 : 0, y: 0, width: 100, height: 100)
                 }
+
+                let caAnimation = view.square.layer.animation(forKey: "position") as! CASpringAnimation
+
+                let response = 2 * CGFloat.pi / sqrt(caAnimation.stiffness / caAnimation.mass)
+                let dampingRatio = caAnimation.damping / 2 / sqrt(caAnimation.stiffness * caAnimation.mass)
+
+                print("Response \(response), damping ratio: \(dampingRatio)")
             case .right(let caValue):
                 let animation = CASpringAnimation()
 
@@ -151,6 +158,8 @@ class UIAnimationController<RecordingValue> {
                 view.square.layer.add(animation, forKey: "spring")
 
                 view.square.layer.position = newPosition
+
+                print("Settling duration: \(animation.settlingDuration)")
             }
         } else {
             view.square.layer.removeAllAnimations()
