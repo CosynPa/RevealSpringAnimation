@@ -156,7 +156,9 @@ class UIAnimationController<RecordingValue> {
 
                 animation.keyPath = #keyPath(CALayer.position)
                 animation.duration = animation.settlingDuration
-                animation.fromValue = view.square.layer.position
+
+                let layer = view.square.layer
+                animation.fromValue = (layer.presentation() ?? layer).position
 
                 let newPosition = CGPoint(x: 50, y: offset ? 150 : 50)
                 animation.toValue = newPosition
@@ -176,7 +178,8 @@ class UIAnimationController<RecordingValue> {
                         return normalTime
                     } as [NSNumber]
 
-                let fromY = view.square.layer.position.y
+                let layer = view.square.layer
+                let fromY = (layer.presentation() ?? layer).position.y
                 let toY: CGFloat = offset ? 150 : 50
 
                 animation.values = keyTimes
