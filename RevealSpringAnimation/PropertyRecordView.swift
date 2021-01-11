@@ -124,7 +124,7 @@ class UIAnimationController<RecordingValue> {
         self.offset = offset
     }
 
-    func setOffset(_ newOffset: Bool, animator: Either<SpringParameter.UIKitSpring, SpringParameter.CASpring>?) {
+    func setOffset(_ newOffset: Bool, animator: EitherThree<SpringParameter.UIKitSpring, SpringParameter.CASpring, SpringCurve>?) {
         offset = newOffset
 
         guard let view = view else { return }
@@ -146,7 +146,7 @@ class UIAnimationController<RecordingValue> {
                 let dampingRatio = caAnimation.damping / 2 / sqrt(caAnimation.stiffness * caAnimation.mass)
 
                 print("Response \(response), damping ratio: \(dampingRatio)")
-            case .right(let caValue):
+            case .mid(let caValue):
                 let animation = CASpringAnimation()
 
                 animation.mass = CGFloat(caValue.mass)
@@ -166,6 +166,32 @@ class UIAnimationController<RecordingValue> {
                 view.square.layer.position = newPosition
 
                 print("Settling duration: \(animation.settlingDuration)")
+            case .right(let curveValue):
+                let animation = CAKeyframeAnimation()
+
+                let keyTimes: [Double] = Array(stride(from: 0.0, to: curveValue.settlingDuration, by: 1 / Double(UIScreen.main.maximumFramesPerSecond)))
+                animation.keyTimes = keyTimes
+                    .map { time -> Double in
+                        let normalTime = time / curveValue.settlingDuration
+                        return normalTime
+                    } as [NSNumber]
+
+                let fromY = view.square.layer.position.y
+                let toY: CGFloat = offset ? 150 : 50
+
+                animation.values = keyTimes
+                    .map(curveValue.curveFunc)
+                    .map { normalValue in
+                        let y = fromY + CGFloat(normalValue) * (toY - fromY)
+                        return CGPoint(x: 50, y: y)
+                    }
+
+                animation.keyPath = #keyPath(CALayer.position)
+                animation.duration = curveValue.settlingDuration
+
+                view.square.layer.add(animation, forKey: "keyFrameSpring")
+
+                view.square.layer.position = CGPoint(x: 50, y: toY)
             }
         } else {
             view.square.layer.removeAllAnimations()

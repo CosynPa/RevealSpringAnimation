@@ -126,23 +126,33 @@ struct RecordController: View {
 
         do {
             switch parameter.type {
-            case .spring, .interpolatingSpring:
+            case .spring:
                 withAnimation(try parameter.animation()) {
                     offset.toggle()
                 }
 
                 // synchronize
                 vm.uikitController.setOffset(offset, animator: nil)
-                // TODO: ainmator
-                vm.customController.setOffset(offset, animator: nil)
+
+                vm.customController.setOffset(offset, animator: .right(SpringCurve(parameter.springValue)))
+            case .interpolatingSpring:
+                withAnimation(try parameter.animation()) {
+                    offset.toggle()
+                }
+
+                // synchronize
+                vm.uikitController.setOffset(offset, animator: nil)
+
+                vm.customController.setOffset(offset, animator: .right(SpringCurve(parameter.interpolatingSpringValue)))
+
             case .uikit:
                 offset.toggle()
                 vm.uikitController.setOffset(offset, animator: .left(try parameter.uikitAnimator()))
-                vm.customController.setOffset(offset, animator: .left(try parameter.uikitAnimator())) // TODO: animator
+                vm.customController.setOffset(offset, animator: .right(SpringCurve(try parameter.uikitAnimator()))) // TODO: simpify API
             case .coreAnimation:
                 offset.toggle()
-                vm.uikitController.setOffset(offset, animator: .right(try parameter.caAnimation()))
-                vm.customController.setOffset(offset, animator: .right(try parameter.caAnimation())) // TODO: animator
+                vm.uikitController.setOffset(offset, animator: .mid(try parameter.caAnimation()))
+                vm.customController.setOffset(offset, animator: .right(SpringCurve(try parameter.caAnimation())))
             }
         } catch let error as SpringParameter.TypeMissmatchError {
             print("Error:")
