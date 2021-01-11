@@ -115,6 +115,7 @@ class UIAnimationController<RecordingValue> {
         didSet {
             // A little hack, this way when calculating the subview position, we don't need the height of this view
             view?.transform = CGAffineTransform(scaleX: 1, y: -1)
+            view?.square.transform = CGAffineTransform(scaleX: 1, y: -1)
             setOffset(offset, animator: nil)
         }
     }
@@ -204,8 +205,14 @@ class UIAnimationController<RecordingValue> {
     }
 }
 
+enum AnimationViewType {
+    case systemAnimation
+    case customAnimation
+}
+
 struct UIAnimationView<RecordingValue>: UIViewRepresentable {
     var controller: UIAnimationController<RecordingValue>
+    var type: AnimationViewType
 
     func makeUIView(context: Context) -> UIKitAnimationView {
         let view = UIKitAnimationView()
@@ -215,12 +222,20 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIKitAnimationView, context: Context) {
-
+        switch type {
+        case .systemAnimation:
+            uiView.square.backgroundColor = #colorLiteral(red: 0.995510757, green: 0.4321444035, blue: 0, alpha: 1)
+            uiView.label.text = "UIKit"
+        case .customAnimation:
+            uiView.square.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+            uiView.label.text = "Custom"
+        }
     }
 }
 
 class UIKitAnimationView: UIView {
     var square: UIView!
+    var label: UILabel!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -234,8 +249,16 @@ class UIKitAnimationView: UIView {
 
     func commonInit() {
         square = UIView()
-        square.backgroundColor = #colorLiteral(red: 0.9960784314, green: 0.7607843137, blue: 0.03921568627, alpha: 1)
 
         addSubview(square)
+
+        label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        square.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: square.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: square.centerYAnchor),
+        ])
     }
 }

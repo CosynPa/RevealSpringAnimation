@@ -19,14 +19,17 @@ struct RecordCompareView: View {
         case .spring, .interpolatingSpring:
             VStack {
                 Spacer()
-                PropertyRecordView<CGFloat>(recorder: vm.recorder)
-                    .frame(width: 100, height: 100)
-                    .background(Color.yellow)
-                    .offset(y: offset ? -100 : 0)
+                ZStack {
+                    PropertyRecordView<CGFloat>(recorder: vm.recorder)
+                        .background(Color.yellow)
+                    Text("SwiftUI")
+                }
+                .frame(width: 100, height: 100)
+                .offset(y: offset ? -100 : 0)
             }
             .frame(width: 100)
         case .uikit, .coreAnimation:
-            UIAnimationView(controller: vm.uikitController)
+            UIAnimationView(controller: vm.uikitController, type: .systemAnimation)
                 .onAppear {
                     vm.uikitController.setOffset(offset, animator: nil)
                 }
@@ -36,7 +39,7 @@ struct RecordCompareView: View {
 
     @ViewBuilder
     var compareView: some View {
-        UIAnimationView(controller: vm.customController)
+        UIAnimationView(controller: vm.customController, type: .customAnimation)
             .onAppear {
                 vm.customController.setOffset(offset, animator: nil)
             }
