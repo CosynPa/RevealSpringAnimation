@@ -182,48 +182,51 @@ struct RecordController: View {
     }
 
     var body: some View {
-        ZStack(alignment: .top) {
-            Color.clear
-            VStack {
-                SpringParameterController(parameter: $parameter)
-                    .onChange(of: parameter.type) { _ in
-                        onSwitchType()
+        ZStack(alignment: .bottom) {
+            RecordCompareView(vm: vm, type: $parameter.type, offset: $offset)
+                .padding()
+
+            ZStack(alignment: .top) {
+                Color.clear
+                VStack {
+                    SpringParameterController(parameter: $parameter)
+                        .onChange(of: parameter.type) { _ in
+                            onSwitchType()
+                        }
+
+                    Divider()
+
+                    Toggle("Record", isOn: $shouldRecord)
+                        .onChange(of: shouldRecord) { value in
+                            vm.recorder.shouldRecord = shouldRecord
+                        }
+
+                    HStack {
+                        Text("Record Duration")
+                        Text(String(format: "%.1f", recordDuration))
+                            .frame(width: 60, alignment: .trailing)
+                        Slider(value: $recordDuration, in: 0.1 ... 10.0)
                     }
 
-                Divider()
+                    Divider()
 
-                Toggle("Record", isOn: $shouldRecord)
-                    .onChange(of: shouldRecord) { value in
-                        vm.recorder.shouldRecord = shouldRecord
+                    Button("Animate") {
+                        onStart()
                     }
 
-                HStack {
-                    Text("Record Duration")
-                    Text(String(format: "%.1f", recordDuration))
-                        .frame(width: 60, alignment: .trailing)
-                    Slider(value: $recordDuration, in: 0.1 ... 10.0)
+                    Button("Reset") {
+                        onReset()
+                    }
                 }
-
-                Divider()
-
-                Button("Animate") {
-                    onStart()
-                }
-
-                Button("Reset") {
-                    onReset()
-                }
-
-                RecordCompareView(vm: vm, type: $parameter.type, offset: $offset)
             }
             .padding()
-            .onReceive(vm.recorder.record) { record in
-                print(record)
-            }
-            .onReceive(vm.customRecorder.record) { record in
-                print("Custom animation record")
-                print(record)
-            }
+        }
+        .onReceive(vm.recorder.record) { record in
+            print(record)
+        }
+        .onReceive(vm.customRecorder.record) { record in
+            print("Custom animation record")
+            print(record)
         }
     }
 }
