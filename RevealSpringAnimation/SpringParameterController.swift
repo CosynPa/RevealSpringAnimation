@@ -87,32 +87,6 @@ struct SpringParameter {
             throw TypeMissmatchError(message: "No animation for coreAnimation type")
         }
     }
-
-    func uikitAnimator() throws -> UIKitSpring {
-        switch type {
-        case .spring:
-            throw TypeMissmatchError(message: "No uikitAnimator for spring type")
-        case .interpolatingSpring:
-            throw TypeMissmatchError(message: "No uikitAnimator for interpolatingSpring type")
-        case .uikit:
-            return uikitValue
-        case .coreAnimation:
-            throw TypeMissmatchError(message: "No uikitAnimator for coreAnimation type")
-        }
-    }
-
-    func caAnimation() throws -> CASpring {
-        switch type {
-        case .spring:
-            throw TypeMissmatchError(message: "No caAnimation for spring type")
-        case .interpolatingSpring:
-            throw TypeMissmatchError(message: "No caAnimation for interpolatingSpring type")
-        case .uikit:
-            throw TypeMissmatchError(message: "No caAnimation for uikit type")
-        case .coreAnimation:
-            return caValue
-        }
-    }
 }
 
 struct TextWidthKey: PreferenceKey {

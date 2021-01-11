@@ -147,12 +147,12 @@ struct RecordController: View {
 
             case .uikit:
                 offset.toggle()
-                vm.uikitController.setOffset(offset, animator: .left(try parameter.uikitAnimator()))
-                vm.customController.setOffset(offset, animator: .right(SpringCurve(try parameter.uikitAnimator()))) // TODO: simpify API
+                vm.uikitController.setOffset(offset, animator: .left(parameter.uikitValue))
+                vm.customController.setOffset(offset, animator: .right(SpringCurve(parameter.uikitValue)))
             case .coreAnimation:
                 offset.toggle()
-                vm.uikitController.setOffset(offset, animator: .mid(try parameter.caAnimation()))
-                vm.customController.setOffset(offset, animator: .right(SpringCurve(try parameter.caAnimation())))
+                vm.uikitController.setOffset(offset, animator: .mid(parameter.caValue))
+                vm.customController.setOffset(offset, animator: .right(SpringCurve(parameter.caValue)))
             }
         } catch let error as SpringParameter.TypeMissmatchError {
             print("Error:")
