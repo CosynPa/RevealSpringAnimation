@@ -37,7 +37,11 @@ class PropertyRecorder<RecordingValue> {
     // When calls this function, it should return the current value that you want to record
     var recording: (UIView) -> RecordingValue
 
-    @Published var record: [(TimeInterval, RecordingValue)] = []
+    var record: AnyPublisher<[(TimeInterval, RecordingValue)], Never> {
+        recordSubject.eraseToAnyPublisher()
+    }
+
+    private var recordSubject = PassthroughSubject<[(TimeInterval, RecordingValue)], Never>()
 
     // Provided by PropertyRecordView, the user should not directly set this property
     fileprivate var view: UIView?
@@ -77,7 +81,7 @@ class PropertyRecorder<RecordingValue> {
         if recordingLink != nil {
             recordingLink = nil
 
-            record = recordingValues
+            recordSubject.send(recordingValues)
 
             recordingValues = []
         } else {

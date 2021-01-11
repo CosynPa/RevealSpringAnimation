@@ -217,10 +217,10 @@ struct RecordController: View {
                 RecordCompareView(vm: vm, type: $parameter.type, offset: $offset)
             }
             .padding()
-            .onReceive(vm.recorder.$record) { record in
+            .onReceive(vm.recorder.record) { record in
                 print(record)
             }
-            .onReceive(vm.customRecorder.$record) { record in
+            .onReceive(vm.customRecorder.record) { record in
                 print("Custom animation record")
                 print(record)
             }
