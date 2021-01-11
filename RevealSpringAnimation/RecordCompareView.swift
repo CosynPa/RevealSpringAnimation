@@ -13,22 +13,42 @@ struct RecordCompareView: View {
     @Binding var type: SpringParameter.SpringType
     @Binding var offset: Bool
 
-    var body: some View {
+    @ViewBuilder
+    var systemView: some View {
         switch type {
         case .spring, .interpolatingSpring:
-            HStack {
+            VStack {
+                Spacer()
                 PropertyRecordView<CGFloat>(recorder: vm.recorder)
                     .frame(width: 100, height: 100)
                     .background(Color.yellow)
-                    .offset(x: offset ? 100 : 0)
-                Spacer()
+                    .offset(y: offset ? -100 : 0)
             }
+            .frame(width: 100)
         case .uikit, .coreAnimation:
             UIAnimationView(controller: vm.uikitController)
                 .onAppear {
                     vm.uikitController.setOffset(offset, animator: nil)
                 }
-                .frame(height: 100)
+                .frame(width: 100)
+        }
+    }
+
+    @ViewBuilder
+    var compareView: some View {
+        UIAnimationView(controller: vm.customController)
+            .onAppear {
+                vm.customController.setOffset(offset, animator: nil)
+            }
+            .frame(width: 100)
+    }
+
+    var body: some View {
+        HStack(spacing: 0) {
+            Spacer()
+            systemView
+            compareView
+            Spacer()
         }
     }
 }
@@ -47,6 +67,6 @@ struct RecordCompareView_Previews: PreviewProvider {
             RecordCompareView(vm: vm, type: .constant(.uikit), offset: .constant(true))
 
         }
-        .previewLayout(.sizeThatFits)
+        .previewLayout(.fixed(width: 400, height: 250))
     }
 }

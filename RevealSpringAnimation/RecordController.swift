@@ -15,7 +15,12 @@ enum RecordingState {
 
 class RecordControllerVM: ObservableObject {
     let recorder: PropertyRecorder<CGFloat>
+
+    // Used for system animation
     let uikitController: UIAnimationController<CGFloat>
+
+    // Used for custom key frame animation
+    let customController: UIAnimationController<CGFloat>
 
     init() {
         recorder = PropertyRecorder<CGFloat> { (view) -> CGFloat in
@@ -23,10 +28,11 @@ class RecordControllerVM: ObservableObject {
                 // Can happen when the view is off screen
                 return 0
             }
-            return layer.convert(CGPoint.zero, to: nil).x
+            return layer.convert(CGPoint.zero, to: nil).y
         }
 
         uikitController = UIAnimationController(recorder: recorder, offset: false)
+        customController = UIAnimationController(recorder: recorder, offset: false)
     }
 }
 
@@ -113,15 +119,20 @@ struct RecordController: View {
             case .spring, .interpolatingSpring:
                 withAnimation(try parameter.animation()) {
                     offset.toggle()
-                    // synchronize
-                    vm.uikitController.setOffset(offset, animator: nil)
                 }
+
+                // synchronize
+                vm.uikitController.setOffset(offset, animator: nil)
+                // TODO: ainmator
+                vm.customController.setOffset(offset, animator: nil)
             case .uikit:
                 offset.toggle()
                 vm.uikitController.setOffset(offset, animator: .left(try parameter.uikitAnimator()))
+                vm.customController.setOffset(offset, animator: .left(try parameter.uikitAnimator())) // TODO: animator
             case .coreAnimation:
                 offset.toggle()
                 vm.uikitController.setOffset(offset, animator: .right(try parameter.caAnimation()))
+                vm.customController.setOffset(offset, animator: .right(try parameter.caAnimation())) // TODO: animator
             }
         } catch let error as SpringParameter.TypeMissmatchError {
             print("Error:")
@@ -156,6 +167,7 @@ struct RecordController: View {
         }
 
         vm.uikitController.setOffset(newOffset, animator: nil)
+        vm.customController.setOffset(newOffset, animator: nil)
     }
 
     var body: some View {

@@ -109,6 +109,8 @@ class UIAnimationController<RecordingValue> {
     private var offset: Bool
     fileprivate var view: UIKitAnimationView? {
         didSet {
+            // A little hack, this way when calculating the subview position, we don't need the height of this view
+            view?.transform = CGAffineTransform(scaleX: 1, y: -1)
             setOffset(offset, animator: nil)
         }
     }
@@ -131,7 +133,7 @@ class UIAnimationController<RecordingValue> {
                                usingSpringWithDamping: CGFloat(uiValue.dampingRatio),
                                initialSpringVelocity: CGFloat(uiValue.initialVelocity),
                                options: []) { [self] () in
-                    view.square.frame = CGRect(x: self.offset ? 100 : 0, y: 0, width: 100, height: 100)
+                    view.square.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
                 }
 
                 let caAnimation = view.square.layer.animation(forKey: "position") as! CASpringAnimation
@@ -152,7 +154,7 @@ class UIAnimationController<RecordingValue> {
                 animation.duration = animation.settlingDuration
                 animation.fromValue = view.square.layer.position
 
-                let newPosition = CGPoint(x: offset ? 150 : 50, y: 50)
+                let newPosition = CGPoint(x: 50, y: offset ? 150 : 50)
                 animation.toValue = newPosition
 
                 view.square.layer.add(animation, forKey: "spring")
@@ -163,7 +165,8 @@ class UIAnimationController<RecordingValue> {
             }
         } else {
             view.square.layer.removeAllAnimations()
-            view.square.frame = CGRect(x: offset ? 100 : 0, y: 0, width: 100, height: 100)
+
+            view.square.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
         }
     }
 }
