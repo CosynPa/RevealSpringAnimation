@@ -14,12 +14,12 @@ enum RecordingState {
 }
 
 class RecordControllerVM: ObservableObject {
-    let recorder: PropertyRecorder<CGFloat>
-
     // Used for system animation
+    let recorder: PropertyRecorder<CGFloat>
     let uikitController: UIAnimationController<CGFloat>
 
     // Used for custom key frame animation
+    let customRecorder: PropertyRecorder<CGFloat>
     let customController: UIAnimationController<CGFloat>
 
     init() {
@@ -32,7 +32,16 @@ class RecordControllerVM: ObservableObject {
         }
 
         uikitController = UIAnimationController(recorder: recorder, offset: false)
-        customController = UIAnimationController(recorder: recorder, offset: false)
+
+        customRecorder = PropertyRecorder<CGFloat> { (view) -> CGFloat in
+            guard let layer = view.layer.presentation() else {
+                // Can happen when the view is off screen
+                return 0
+            }
+            return layer.convert(CGPoint.zero, to: nil).y
+        }
+        customRecorder.shouldRecord = false
+        customController = UIAnimationController(recorder: customRecorder, offset: false)
     }
 }
 
@@ -113,6 +122,7 @@ struct RecordController: View {
 
     private func handleStart() -> AnyCancellable {
         vm.recorder.startRecord()
+        vm.customRecorder.startRecord()
 
         do {
             switch parameter.type {
@@ -149,6 +159,7 @@ struct RecordController: View {
 
     private func handleStop() {
         vm.recorder.endRecord()
+        vm.customRecorder.endRecord()
     }
 
     private func handleReset() {
@@ -207,6 +218,10 @@ struct RecordController: View {
             }
             .padding()
             .onReceive(vm.recorder.$record) { record in
+                print(record)
+            }
+            .onReceive(vm.customRecorder.$record) { record in
+                print("Custom animation record")
                 print(record)
             }
         }
