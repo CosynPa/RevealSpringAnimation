@@ -13,7 +13,7 @@ enum RecordingState {
     case notRecording  // Not this doesn't necessarily mean not animating
 }
 
-class RecordControllerVM: ObservableObject {
+class Recorders: ObservableObject {
     // Used for system animation
     let recorder: PropertyRecorder<CGFloat>
     let uikitController: UIAnimationController<CGFloat>
@@ -45,16 +45,14 @@ class RecordControllerVM: ObservableObject {
     }
 }
 
-struct RecordController: View {
-    @State var state = RecordingState.notRecording
+struct RecordControllerVM {
+    @Binding var state: RecordingState
 
-    @State var shouldRecord = true
+    @Binding var parameter: SpringParameter
+    @Binding var recordDuration: Double
+    @Binding var offset: Bool
 
-    @State var parameter = SpringParameter()
-    @State var recordDuration = 2.0
-    @State var offset = false
-
-    @StateObject var vm = RecordControllerVM()
+    var recorders: Recorders
 
     func onStart() {
         let newState: RecordingState
@@ -105,6 +103,10 @@ struct RecordController: View {
         state = newState
     }
 
+    func onShouldRecordChange(_ newShouldRecord: Bool) {
+        recorders.recorder.shouldRecord = newShouldRecord
+    }
+
     private func onStopTime() {
         let newState: RecordingState
 
@@ -121,8 +123,8 @@ struct RecordController: View {
     }
 
     private func handleStart() -> AnyCancellable {
-        vm.recorder.startRecord()
-        vm.customRecorder.startRecord()
+        recorders.recorder.startRecord()
+        recorders.customRecorder.startRecord()
 
         do {
             switch parameter.type {
@@ -132,27 +134,27 @@ struct RecordController: View {
                 }
 
                 // synchronize
-                vm.uikitController.setOffset(offset, animator: nil)
+                recorders.uikitController.setOffset(offset, animator: nil)
 
-                vm.customController.setOffset(offset, animator: .right(SpringCurve(parameter.springValue)))
+                recorders.customController.setOffset(offset, animator: .right(SpringCurve(parameter.springValue)))
             case .interpolatingSpring:
                 withAnimation(try parameter.animation()) {
                     offset.toggle()
                 }
 
                 // synchronize
-                vm.uikitController.setOffset(offset, animator: nil)
+                recorders.uikitController.setOffset(offset, animator: nil)
 
-                vm.customController.setOffset(offset, animator: .right(SpringCurve(parameter.interpolatingSpringValue)))
+                recorders.customController.setOffset(offset, animator: .right(SpringCurve(parameter.interpolatingSpringValue)))
 
             case .uikit:
                 offset.toggle()
-                vm.uikitController.setOffset(offset, animator: .left(parameter.uikitValue))
-                vm.customController.setOffset(offset, animator: .right(SpringCurve(parameter.uikitValue)))
+                recorders.uikitController.setOffset(offset, animator: .left(parameter.uikitValue))
+                recorders.customController.setOffset(offset, animator: .right(SpringCurve(parameter.uikitValue)))
             case .coreAnimation:
                 offset.toggle()
-                vm.uikitController.setOffset(offset, animator: .mid(parameter.caValue))
-                vm.customController.setOffset(offset, animator: .right(SpringCurve(parameter.caValue)))
+                recorders.uikitController.setOffset(offset, animator: .mid(parameter.caValue))
+                recorders.customController.setOffset(offset, animator: .right(SpringCurve(parameter.caValue)))
             }
         } catch let error as SpringParameter.TypeMissmatchError {
             print("Error:")
@@ -168,8 +170,8 @@ struct RecordController: View {
     }
 
     private func handleStop() {
-        vm.recorder.endRecord()
-        vm.customRecorder.endRecord()
+        recorders.recorder.endRecord()
+        recorders.customRecorder.endRecord()
     }
 
     private func handleReset() {
@@ -187,13 +189,34 @@ struct RecordController: View {
             offset = newOffset
         }
 
-        vm.uikitController.setOffset(newOffset, animator: nil)
-        vm.customController.setOffset(newOffset, animator: nil)
+        recorders.uikitController.setOffset(newOffset, animator: nil)
+        recorders.customController.setOffset(newOffset, animator: nil)
+    }
+
+}
+
+struct RecordController: View {
+    @State var state = RecordingState.notRecording
+
+    @State var shouldRecord = true
+
+    @State var parameter = SpringParameter()
+    @State var recordDuration = 2.0
+    @State var offset = false
+
+    @StateObject var recorders = Recorders()
+
+    var vm: RecordControllerVM {
+        RecordControllerVM(state: $state,
+                           parameter: $parameter,
+                           recordDuration: $recordDuration,
+                           offset: $offset,
+                           recorders: recorders)
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            RecordCompareView(vm: vm, type: $parameter.type, offset: $offset)
+            RecordCompareView(recorders: recorders, type: $parameter.type, offset: $offset)
                 .padding()
 
             ZStack(alignment: .top) {
@@ -201,14 +224,14 @@ struct RecordController: View {
                 VStack {
                     SpringParameterController(parameter: $parameter)
                         .onChange(of: parameter.type) { _ in
-                            onSwitchType()
+                            vm.onSwitchType()
                         }
 
                     Divider()
 
                     Toggle("Record", isOn: $shouldRecord)
                         .onChange(of: shouldRecord) { value in
-                            vm.recorder.shouldRecord = shouldRecord
+                            vm.onShouldRecordChange(value)
                         }
 
                     HStack {
@@ -221,20 +244,20 @@ struct RecordController: View {
                     Divider()
 
                     Button("Animate") {
-                        onStart()
+                        vm.onStart()
                     }
 
                     Button("Reset") {
-                        onReset()
+                        vm.onReset()
                     }
                 }
             }
             .padding()
         }
-        .onReceive(vm.recorder.record) { record in
+        .onReceive(recorders.recorder.record) { record in
             print(record)
         }
-        .onReceive(vm.customRecorder.record) { record in
+        .onReceive(recorders.customRecorder.record) { record in
             print("Custom animation record")
             print(record)
         }
