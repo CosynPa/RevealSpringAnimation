@@ -35,6 +35,14 @@ struct SpringCurve {
         2 * Double.pi / response
     }
 
+    func stiffness(mass: Double = 1.0) -> Double {
+        mass * omega * omega
+    }
+
+    func damping(mass: Double = 1.0) -> Double {
+        dampingRatio * 2 * sqrt(stiffness(mass: mass) * mass)
+    }
+
     var settlingDuration: Double {
         // TODO:
         return response
