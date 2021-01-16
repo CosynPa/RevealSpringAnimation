@@ -17,6 +17,7 @@
 		7EC6EA0A25A60B7A00BD0F48 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC6EA0925A60B7A00BD0F48 /* Either.swift */; };
 		7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */; };
 		7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */; };
+		7ED5109E25B2FE2C006F16CC /* NewtonSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		7EC6EA0925A60B7A00BD0F48 /* Either.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
 		7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringParameterController.swift; sourceTree = "<group>"; };
 		7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoInvalidatingDisplayLink.swift; sourceTree = "<group>"; };
+		7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewtonSolver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				7E1212CD25AC09F50018189A /* SpringCurve.swift */,
+				7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */,
 				7EC6EA0925A60B7A00BD0F48 /* Either.swift */,
 				7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */,
 				7E3BADFA258F0C4300F5D810 /* RevealSpringAnimationApp.swift */,
@@ -163,6 +166,7 @@
 				7E1212CE25AC09F60018189A /* SpringCurve.swift in Sources */,
 				7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */,
 				7EC6EA0A25A60B7A00BD0F48 /* Either.swift in Sources */,
+				7ED5109E25B2FE2C006F16CC /* NewtonSolver.swift in Sources */,
 				7E3BAE0B258F0D4F00F5D810 /* PropertyRecordView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
