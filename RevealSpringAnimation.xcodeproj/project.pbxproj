@@ -18,6 +18,7 @@
 		7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */; };
 		7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */; };
 		7ED5109E25B2FE2C006F16CC /* NewtonSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */; };
+		7ED510A225B4290C006F16CC /* BinarySearchSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510A125B4290C006F16CC /* BinarySearchSolver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringParameterController.swift; sourceTree = "<group>"; };
 		7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoInvalidatingDisplayLink.swift; sourceTree = "<group>"; };
 		7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewtonSolver.swift; sourceTree = "<group>"; };
+		7ED510A125B4290C006F16CC /* BinarySearchSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinarySearchSolver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 			children = (
 				7E1212CD25AC09F50018189A /* SpringCurve.swift */,
 				7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */,
+				7ED510A125B4290C006F16CC /* BinarySearchSolver.swift */,
 			);
 			path = Math;
 			sourceTree = "<group>";
@@ -168,6 +171,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7E3BADFD258F0C4300F5D810 /* RecordController.swift in Sources */,
+				7ED510A225B4290C006F16CC /* BinarySearchSolver.swift in Sources */,
 				7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */,
 				7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */,
 				7E1212CB25AB50260018189A /* RecordCompareView.swift in Sources */,
