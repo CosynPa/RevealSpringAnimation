@@ -23,6 +23,7 @@
 		7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */; };
 		7ED510C025B43266006F16CC /* SettlingDuratinonSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */; };
 		7ED510C625B439D0006F16CC /* SettlingDurationSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */; };
+		7ED510CA25B445B1006F16CC /* DerivativeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510C925B445B0006F16CC /* DerivativeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinarySearchSolverTests.swift; sourceTree = "<group>"; };
 		7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettlingDuratinonSolver.swift; sourceTree = "<group>"; };
 		7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettlingDurationSolverTests.swift; sourceTree = "<group>"; };
+		7ED510C925B445B0006F16CC /* DerivativeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivativeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +139,7 @@
 				7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */,
 				7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */,
 				7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */,
+				7ED510C925B445B0006F16CC /* DerivativeTests.swift */,
 				7ED510AC25B42CA9006F16CC /* Info.plist */,
 			);
 			path = RevealSpringAnimationTests;
@@ -261,6 +264,7 @@
 			files = (
 				7ED510AB25B42CA9006F16CC /* NewtonSolverTests.swift in Sources */,
 				7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */,
+				7ED510CA25B445B1006F16CC /* DerivativeTests.swift in Sources */,
 				7ED510C625B439D0006F16CC /* SettlingDurationSolverTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
