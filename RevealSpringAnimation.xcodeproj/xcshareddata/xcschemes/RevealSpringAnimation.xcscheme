@@ -28,6 +28,16 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7ED510A725B42CA8006F16CC"
+               BuildableName = "RevealSpringAnimationTests.xctest"
+               BlueprintName = "RevealSpringAnimationTests"
+               ReferencedContainer = "container:RevealSpringAnimation.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

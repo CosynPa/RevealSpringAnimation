@@ -19,7 +19,19 @@
 		7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */; };
 		7ED5109E25B2FE2C006F16CC /* NewtonSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */; };
 		7ED510A225B4290C006F16CC /* BinarySearchSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510A125B4290C006F16CC /* BinarySearchSolver.swift */; };
+		7ED510AB25B42CA9006F16CC /* NewtonSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */; };
+		7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7ED510AD25B42CA9006F16CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E3BADEF258F0C4200F5D810 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7E3BADF6258F0C4300F5D810;
+			remoteInfo = RevealSpringAnimation;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		7E1212CA25AB50260018189A /* RecordCompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCompareView.swift; sourceTree = "<group>"; };
@@ -36,10 +48,21 @@
 		7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoInvalidatingDisplayLink.swift; sourceTree = "<group>"; };
 		7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewtonSolver.swift; sourceTree = "<group>"; };
 		7ED510A125B4290C006F16CC /* BinarySearchSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinarySearchSolver.swift; sourceTree = "<group>"; };
+		7ED510A825B42CA8006F16CC /* RevealSpringAnimationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RevealSpringAnimationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewtonSolverTests.swift; sourceTree = "<group>"; };
+		7ED510AC25B42CA9006F16CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinarySearchSolverTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		7E3BADF4258F0C4300F5D810 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7ED510A525B42CA8006F16CC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -53,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				7E3BADF9258F0C4300F5D810 /* RevealSpringAnimation */,
+				7ED510A925B42CA9006F16CC /* RevealSpringAnimationTests */,
 				7E3BADF8258F0C4300F5D810 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,6 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				7E3BADF7258F0C4300F5D810 /* RevealSpringAnimation.app */,
+				7ED510A825B42CA8006F16CC /* RevealSpringAnimationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,6 +126,16 @@
 			path = Math;
 			sourceTree = "<group>";
 		};
+		7ED510A925B42CA9006F16CC /* RevealSpringAnimationTests */ = {
+			isa = PBXGroup;
+			children = (
+				7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */,
+				7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */,
+				7ED510AC25B42CA9006F16CC /* Info.plist */,
+			);
+			path = RevealSpringAnimationTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -121,17 +156,39 @@
 			productReference = 7E3BADF7258F0C4300F5D810 /* RevealSpringAnimation.app */;
 			productType = "com.apple.product-type.application";
 		};
+		7ED510A725B42CA8006F16CC /* RevealSpringAnimationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7ED510AF25B42CA9006F16CC /* Build configuration list for PBXNativeTarget "RevealSpringAnimationTests" */;
+			buildPhases = (
+				7ED510A425B42CA8006F16CC /* Sources */,
+				7ED510A525B42CA8006F16CC /* Frameworks */,
+				7ED510A625B42CA8006F16CC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7ED510AE25B42CA9006F16CC /* PBXTargetDependency */,
+			);
+			name = RevealSpringAnimationTests;
+			productName = RevealSpringAnimationTests;
+			productReference = 7ED510A825B42CA8006F16CC /* RevealSpringAnimationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		7E3BADEF258F0C4200F5D810 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1220;
+				LastSwiftUpdateCheck = 1230;
 				LastUpgradeCheck = 1220;
 				TargetAttributes = {
 					7E3BADF6258F0C4300F5D810 = {
 						CreatedOnToolsVersion = 12.2;
+					};
+					7ED510A725B42CA8006F16CC = {
+						CreatedOnToolsVersion = 12.3;
+						TestTargetID = 7E3BADF6258F0C4300F5D810;
 					};
 				};
 			};
@@ -149,6 +206,7 @@
 			projectRoot = "";
 			targets = (
 				7E3BADF6258F0C4300F5D810 /* RevealSpringAnimation */,
+				7ED510A725B42CA8006F16CC /* RevealSpringAnimationTests */,
 			);
 		};
 /* End PBXProject section */
@@ -160,6 +218,13 @@
 			files = (
 				7E3BAE02258F0C4E00F5D810 /* Preview Assets.xcassets in Resources */,
 				7E3BADFF258F0C4E00F5D810 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7ED510A625B42CA8006F16CC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,7 +248,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7ED510A425B42CA8006F16CC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7ED510AB25B42CA9006F16CC /* NewtonSolverTests.swift in Sources */,
+				7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7ED510AE25B42CA9006F16CC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7E3BADF6258F0C4300F5D810 /* RevealSpringAnimation */;
+			targetProxy = 7ED510AD25B42CA9006F16CC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		7E3BAE04258F0C4E00F5D810 /* Debug */ = {
@@ -346,6 +428,48 @@
 			};
 			name = Release;
 		};
+		7ED510B025B42CA9006F16CC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = CDJ7F645Y8;
+				INFOPLIST_FILE = RevealSpringAnimationTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.self.RevealSpringAnimationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RevealSpringAnimation.app/RevealSpringAnimation";
+			};
+			name = Debug;
+		};
+		7ED510B125B42CA9006F16CC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = CDJ7F645Y8;
+				INFOPLIST_FILE = RevealSpringAnimationTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.self.RevealSpringAnimationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RevealSpringAnimation.app/RevealSpringAnimation";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -363,6 +487,15 @@
 			buildConfigurations = (
 				7E3BAE07258F0C4E00F5D810 /* Debug */,
 				7E3BAE08258F0C4E00F5D810 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7ED510AF25B42CA9006F16CC /* Build configuration list for PBXNativeTarget "RevealSpringAnimationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7ED510B025B42CA9006F16CC /* Debug */,
+				7ED510B125B42CA9006F16CC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
