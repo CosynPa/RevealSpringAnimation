@@ -15,7 +15,14 @@ struct NewtonSolver {
         while previous.flatMap({ previous in abs(previous - x) >= epsilon }) ?? true, tryCount < maxTry {
             tryCount += 1
             previous = x
-            x = x - f(x) / max(df(x), epsilon)
+
+            var d = df(x)
+
+            if abs(d) < epsilon {
+                d = d >= 0 ? epsilon : -epsilon
+            }
+
+            x = x - f(x) / d
         }
         return x
     }
