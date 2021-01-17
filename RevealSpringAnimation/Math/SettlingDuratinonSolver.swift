@@ -9,7 +9,7 @@ import Foundation
 
 // Find the largest solution x that |x(x)| = alpha where x is the position from the equilibrium position.
 struct SettlingDurationSolver {
-    static func criticalDampingSolve(curve: SpringCurve, alpha: Double = 1e-3, epsilon: Double = 1e-8) -> Double {
+    static func criticalDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double = 1e-8) -> Double {
         assert(curve.dampingRatio == 1.0)
         assert(alpha < 1)
 
