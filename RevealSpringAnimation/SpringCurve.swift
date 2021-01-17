@@ -99,9 +99,9 @@ struct SpringCurve {
         } else {
             let a = -omega * zeta
             let b = omega * sqrt(1 - zeta * zeta)
-            let c1 = -1.0
             let c2 = (v0 + a) / b
-            y = c1 * exp(a * t) * cos(b * t) + c2 * exp(a * t) * sin(b * t)
+            let theta = atan(c2)
+            y = sqrt(1 + c2 * c2) * exp(a * t) * cos(b * t + theta + Double.pi)
         }
 
         return y + 1
