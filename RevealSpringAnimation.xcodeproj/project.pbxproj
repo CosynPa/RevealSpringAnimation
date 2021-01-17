@@ -66,8 +66,7 @@
 		7E3BADF9258F0C4300F5D810 /* RevealSpringAnimation */ = {
 			isa = PBXGroup;
 			children = (
-				7E1212CD25AC09F50018189A /* SpringCurve.swift */,
-				7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */,
+				7ED510A025B428B4006F16CC /* Math */,
 				7EC6EA0925A60B7A00BD0F48 /* Either.swift */,
 				7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */,
 				7E3BADFA258F0C4300F5D810 /* RevealSpringAnimationApp.swift */,
@@ -88,6 +87,15 @@
 				7E3BAE01258F0C4E00F5D810 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		7ED510A025B428B4006F16CC /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				7E1212CD25AC09F50018189A /* SpringCurve.swift */,
+				7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */,
+			);
+			path = Math;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
