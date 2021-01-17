@@ -21,6 +21,8 @@
 		7ED510A225B4290C006F16CC /* BinarySearchSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510A125B4290C006F16CC /* BinarySearchSolver.swift */; };
 		7ED510AB25B42CA9006F16CC /* NewtonSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */; };
 		7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */; };
+		7ED510C025B43266006F16CC /* SettlingDuratinonSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */; };
+		7ED510C625B439D0006F16CC /* SettlingDurationSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +54,8 @@
 		7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewtonSolverTests.swift; sourceTree = "<group>"; };
 		7ED510AC25B42CA9006F16CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinarySearchSolverTests.swift; sourceTree = "<group>"; };
+		7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettlingDuratinonSolver.swift; sourceTree = "<group>"; };
+		7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettlingDurationSolverTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +126,7 @@
 				7E1212CD25AC09F50018189A /* SpringCurve.swift */,
 				7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */,
 				7ED510A125B4290C006F16CC /* BinarySearchSolver.swift */,
+				7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */,
 			);
 			path = Math;
 			sourceTree = "<group>";
@@ -131,6 +136,7 @@
 			children = (
 				7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */,
 				7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */,
+				7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */,
 				7ED510AC25B42CA9006F16CC /* Info.plist */,
 			);
 			path = RevealSpringAnimationTests;
@@ -237,6 +243,7 @@
 			files = (
 				7E3BADFD258F0C4300F5D810 /* RecordController.swift in Sources */,
 				7ED510A225B4290C006F16CC /* BinarySearchSolver.swift in Sources */,
+				7ED510C025B43266006F16CC /* SettlingDuratinonSolver.swift in Sources */,
 				7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */,
 				7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */,
 				7E1212CB25AB50260018189A /* RecordCompareView.swift in Sources */,
@@ -254,6 +261,7 @@
 			files = (
 				7ED510AB25B42CA9006F16CC /* NewtonSolverTests.swift in Sources */,
 				7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */,
+				7ED510C625B439D0006F16CC /* SettlingDurationSolverTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
