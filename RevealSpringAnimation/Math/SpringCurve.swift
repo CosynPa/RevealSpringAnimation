@@ -106,4 +106,27 @@ struct SpringCurve {
 
         return y + 1
     }
+
+    func derivativeCurveFunc(_ t: Double) -> Double {
+        let v0 = initialVelocity
+        let zeta = dampingRatio
+
+        if zeta == 1.0 {
+            let c1 = -1.0
+            let c2 = v0 - omega
+            return (c2 - omega * c1 - omega * c2 * t) * exp(-omega * t)
+        } else if zeta > 1 {
+            let s1 = omega * (-zeta + sqrt(zeta * zeta - 1))
+            let s2 = omega * (-zeta - sqrt(zeta * zeta - 1))
+            let c1 = (-s2 - v0) / (s2 - s1)
+            let c2 = (s1 + v0) / (s2 - s1)
+            return c1 * s1 * exp(s1 * t) + c2 * s2 * exp(s2 * t)
+        } else {
+            let a = -omega * zeta
+            let b = omega * sqrt(1 - zeta * zeta)
+            let c2 = (v0 + a) / b
+            let theta = atan(c2)
+            return sqrt(1 + c2 * c2) * exp(a * t) * (a * cos(b * t + theta + Double.pi) - b * sin(b * t + theta + Double.pi))
+        }
+    }
 }
