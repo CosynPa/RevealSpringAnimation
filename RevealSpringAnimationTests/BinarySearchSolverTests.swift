@@ -12,7 +12,7 @@ class BinarySearchSolverTests: XCTestCase {
     func testBasic() throws {
         let f: (Double) -> Double = { x in x * x - 2.0 }
 
-        let x0 = BinarySearchSolver.solve(f: f, x1: 0, x2: 3)
+        let x0 = try BinarySearchSolver.solve(f: f, x1: 0, x2: 3)
 
         XCTAssertEqual(x0, sqrt(2), accuracy: 1e-8)
     }

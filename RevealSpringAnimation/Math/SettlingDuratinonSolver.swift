@@ -9,7 +9,7 @@ import Foundation
 
 // Find the largest solution x that |x(x)| = alpha where x is the position from the equilibrium position.
 struct SettlingDurationSolver {
-    static func criticalDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double = 1e-8) -> Double {
+    static func criticalDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double = 1e-8) throws -> Double {
         assert(curve.dampingRatio == 1.0)
         assert(alpha < 1)
 
@@ -35,7 +35,7 @@ struct SettlingDurationSolver {
                     f = { t in curve.curveFunc(t) - 1 - alpha }
                 }
 
-                return NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: t2)
+                return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: t2)
             } else {
                 // x'(t1) = 0, the turning point
                 let t1 = t2 - 1 / omega
@@ -53,7 +53,7 @@ struct SettlingDurationSolver {
                         f = { t in curve.curveFunc(t) - 1 - alpha }
                     }
 
-                    return NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: t2)
+                    return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: t2)
                 } else {
                     // |x(0)| = 1 > alpha, |x(t1)| <= alpha, has solution between 0 and t1
                     // Since t1 is the turning point, the solution is unique
@@ -61,17 +61,21 @@ struct SettlingDurationSolver {
                     assert(c2 > 0) // because if c2 < 0, x(t1) < -1
 
                     let f: (Double) -> Double = { t in curve.curveFunc(t) - 1 + alpha }
-                    return NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: 0)
+                    return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: 0)
                 }
             }
         }
     }
 
     static func settlingDuration(curve: SpringCurve, alpha: Double = 1e-3) -> Double {
-        if curve.dampingRatio == 1.0 {
-            return Self.criticalDampingSolve(curve: curve, alpha: alpha)
-        } else {
-            // TODO
+        do {
+            if curve.dampingRatio == 1.0 {
+                return try Self.criticalDampingSolve(curve: curve, alpha: alpha)
+            } else {
+                // TODO
+                return 0
+            }
+        } catch {
             return 0
         }
     }

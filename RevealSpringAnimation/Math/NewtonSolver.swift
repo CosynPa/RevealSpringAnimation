@@ -8,11 +8,17 @@
 import Foundation
 
 struct NewtonSolver {
-    static func solve(f: (Double) -> Double, df: (Double) -> (Double), x0: Double, epsilon: Double = 1e-8, maxTry: Int = 1000) -> Double {
+    struct MaxTry: Error { }
+
+    static func solve(f: (Double) -> Double, df: (Double) -> (Double), x0: Double, epsilon: Double = 1e-8, maxTry: Int = 1000) throws  -> Double {
         var x = x0
         var previous: Double?
         var tryCount = 0
-        while previous.flatMap({ previous in abs(previous - x) >= epsilon }) ?? true, tryCount < maxTry {
+        while previous.flatMap({ previous in abs(previous - x) >= epsilon }) ?? true {
+            guard tryCount < maxTry else {
+                throw MaxTry()
+            }
+
             tryCount += 1
             previous = x
 

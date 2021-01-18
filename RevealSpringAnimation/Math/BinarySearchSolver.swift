@@ -8,7 +8,9 @@
 import Foundation
 
 struct BinarySearchSolver {
-    static func solve(f: (Double) -> Double, x1: Double, x2: Double, epsilon: Double = 1e-8) -> Double {
+    struct InvalidInitialCondition: Error { }
+
+    static func solve(f: (Double) -> Double, x1: Double, x2: Double, epsilon: Double = 1e-8) throws -> Double {
         guard f(x1) != 0 else {
             return x1
         }
@@ -19,11 +21,11 @@ struct BinarySearchSolver {
 
         guard f(x1) * f(x2) < 0 else {
             // Can't find the solution
-            return x1
+            throw InvalidInitialCondition()
         }
 
         guard x1 != x2 else {
-            return x1
+            throw InvalidInitialCondition()
         }
 
         var x1 = x1 < x2 ? x1 : x2

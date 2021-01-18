@@ -13,7 +13,7 @@ class NewtonSolverTests: XCTestCase {
         let f: (Double) -> Double = { x in x * x - 2.0 }
         let df: (Double) -> Double = { x in 2 * x }
 
-        let x0 = NewtonSolver.solve(f: f, df: df, x0: 3)
+        let x0 = try NewtonSolver.solve(f: f, df: df, x0: 3)
 
         XCTAssertEqual(x0, sqrt(2), accuracy: 1e-8)
     }
@@ -22,7 +22,7 @@ class NewtonSolverTests: XCTestCase {
         let f: (Double) -> Double = { x in x * x - 2.0 }
         let df: (Double) -> Double = { x in 2 * x }
 
-        let x0 = NewtonSolver.solve(f: f, df: df, x0: -3)
+        let x0 = try NewtonSolver.solve(f: f, df: df, x0: -3)
 
         XCTAssertEqual(x0, -sqrt(2), accuracy: 1e-8)
     }

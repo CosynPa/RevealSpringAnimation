@@ -20,11 +20,11 @@ class SettlingDurationSolverTests: XCTestCase {
             let curve = SpringCurve(response: 2 * Double.pi / p.omega, dampingRatio: p.dampingRatio, initialVelocity: p.v0)
 
             let alpha = 1e-3
-            let t = SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha)
+            let t = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha)
             testSolution(t: t, curve: curve, alpha: alpha)
 
             let alpha2 = 0.8
-            let t2 = SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2)
+            let t2 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2)
             testSolution(t: t2, curve: curve, alpha: alpha2)
         }
     }
@@ -44,12 +44,12 @@ class SettlingDurationSolverTests: XCTestCase {
 
         // When the value at t2 is less than alpha
         let alpha1 = 0.12
-        let t_alpha1 = SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha1)
+        let t_alpha1 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha1)
         testSolution(t: t_alpha1, curve: curve, alpha: alpha1)
 
         // When the value at t1 is less than alpha
         let alpha2 = 0.15
-        let t_alpha2 = SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2)
+        let t_alpha2 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2)
         testSolution(t: t_alpha2, curve: curve, alpha: alpha2)
     }
 
