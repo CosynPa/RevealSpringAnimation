@@ -23,7 +23,7 @@ class DerivativeTests: XCTestCase {
                         let curve = SpringCurve(response: r, dampingRatio: d, initialVelocity: v)
 
                         let df = curve.derivativeCurveFunc(t)
-                        let estimatedDf = estimateDerivative(f: curve.curveFunc, x: t)
+                        let estimatedDf = Self.estimateDerivative(f: curve.curveFunc, x: t)
 
                         XCTAssertEqual(df, estimatedDf, accuracy: 1e-6)
                     }
@@ -32,7 +32,7 @@ class DerivativeTests: XCTestCase {
         }
     }
 
-    func estimateDerivative(f: (Double) -> Double, x: Double) -> Double {
+    static func estimateDerivative(f: (Double) -> Double, x: Double) -> Double {
         let delta = 1e-6
 
         return (f(x + delta) - f(x - delta)) / 2 / delta
