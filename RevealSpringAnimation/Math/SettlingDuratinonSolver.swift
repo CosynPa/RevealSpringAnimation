@@ -7,6 +7,16 @@
 
 import Foundation
 
+// Representing points x + k * step for any integer k
+struct Stride {
+    var x: Double
+    var step: Double
+
+    subscript(k: Int) -> Double {
+        x + Double(k) * step
+    }
+}
+
 // Find the largest solution x that |x(x)| = alpha where x is the position from the equilibrium position.
 struct SettlingDurationSolver {
     static func criticalDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double = 1e-8) throws -> Double {
@@ -65,6 +75,21 @@ struct SettlingDurationSolver {
                 }
             }
         }
+    }
+
+    static func underDampingTurningPoints(curve: SpringCurve, epsilon: Double = 1e-8) -> Stride {
+        assert(curve.dampingRatio < 1.0)
+
+        let omega = curve.omega
+        let zeta = curve.dampingRatio
+        let v0 = curve.initialVelocity
+
+        let a = -omega * zeta
+        let b = omega * sqrt(1 - zeta * zeta)
+        let c2 = (v0 + a) / b
+
+        let phi = atan2(-b - c2 * a, v0)
+        return Stride(x: (-phi + Double.pi / 2) / b, step: Double.pi / b)
     }
 
     static func settlingDuration(curve: SpringCurve, alpha: Double = 1e-3) -> Double {
