@@ -98,7 +98,7 @@ class SettlingDurationSolverTests: XCTestCase {
     func testKBefore() {
         let parameters: [(x: Double, step: Double, y: Double, k: Int)] = [
             (10, 1, 15.5, 5),
-            (10, 1, 15, 4),
+            (10, 1, 15, 5),
             (5, 0.1, 4.35, -7)
         ]
 
