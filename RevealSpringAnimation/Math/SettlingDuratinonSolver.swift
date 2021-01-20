@@ -28,7 +28,7 @@ struct Stride {
 struct SettlingDurationSolver {
     static func criticalDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double = 1e-8) throws -> Double {
         assert(curve.dampingRatio == 1.0)
-        assert(alpha < 1)
+        assert(0 < alpha && alpha < 1)
 
         let v0 = curve.initialVelocity
         let omega = curve.omega
