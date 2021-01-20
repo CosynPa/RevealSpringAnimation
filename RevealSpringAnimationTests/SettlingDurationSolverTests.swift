@@ -95,6 +95,18 @@ class SettlingDurationSolverTests: XCTestCase {
         }
     }
 
+    func testKBefore() {
+        let parameters: [(x: Double, step: Double, y: Double, k: Int)] = [
+            (10, 1, 15.5, 5),
+            (10, 1, 15, 4),
+            (5, 0.1, 4.35, -7)
+        ]
+
+        for (x, step, y, k) in parameters {
+            XCTAssertEqual(Stride(x: x, step: step).k(before: y), k)
+        }
+    }
+
     func testALot() throws {
         let omegas = [1.0, 10.0]
         let dampingRatios = [1.0]

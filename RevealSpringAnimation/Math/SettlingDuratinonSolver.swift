@@ -15,6 +15,13 @@ struct Stride {
     subscript(k: Int) -> Double {
         x + Double(k) * step
     }
+
+    // The largest k such that x + k * step < y
+    func k(before y: Double) -> Int {
+        assert(step > 0)
+        
+        return Int(ceil((y - x) / step)) - 1
+    }
 }
 
 // Find the largest solution x that |x(x)| = alpha where x is the position from the equilibrium position.
