@@ -77,7 +77,7 @@ struct SettlingDurationSolver {
         }
     }
 
-    static func underDampingTurningPoints(curve: SpringCurve, epsilon: Double = 1e-8) -> Stride {
+    static func underDampingTurningPoints(of curve: SpringCurve, epsilon: Double = 1e-8) -> Stride {
         assert(curve.dampingRatio < 1.0)
 
         let omega = curve.omega

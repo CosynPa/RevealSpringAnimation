@@ -66,7 +66,7 @@ class SettlingDurationSolverTests: XCTestCase {
             let curve = SpringCurve(response: 2 * Double.pi / p.omega, dampingRatio: p.dampingRatio, initialVelocity: p.v0)
 
             for k in ks {
-                let stride = SettlingDurationSolver.underDampingTurningPoints(curve: curve)
+                let stride = SettlingDurationSolver.underDampingTurningPoints(of: curve)
                 let df = curve.derivativeCurveFunc(stride[k])
 
                 XCTAssertEqual(df, 0, accuracy: 1e-6)
