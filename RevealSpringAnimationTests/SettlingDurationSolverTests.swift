@@ -107,9 +107,26 @@ class SettlingDurationSolverTests: XCTestCase {
         }
     }
 
+    func testUnderDamping() throws {
+        let parameters: [(omega: Double, dampingRatio: Double, v0: Double, alpha: Double, t: Double)] = [
+            (10, 0.2, 0, 0.3, 0.42),
+            (10, 0.2, 0, 0.2, 0.72),
+            (10, 0.2, 0, 0.05, 1.37),
+            (5, 0.1, -2, 0.8, 0.22),
+            (5, 0.1, -2, 0.5, 1.44)
+        ]
+
+        for (omega, dampingRatio, v0, alpha, t) in parameters {
+            let curve = SpringCurve(response: 2 * Double.pi / omega, dampingRatio: dampingRatio, initialVelocity: v0)
+
+            let t0 = try SettlingDurationSolver.underDampingSolve(curve: curve, alpha: alpha)
+            XCTAssertEqual(t0, t, accuracy: 0.01)
+        }
+    }
+
     func testALot() throws {
         let omegas = [1.0, 10.0]
-        let dampingRatios = [1.0]
+        let dampingRatios = [0.1, 0.7, 1.0]
         let v0s = stride(from: -100.0, through: 100.0, by: 10.0)
         let alphas = stride(from: 0.001, to: 0.9, by: 0.02)
 
