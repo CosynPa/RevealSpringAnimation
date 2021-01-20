@@ -74,6 +74,27 @@ class SettlingDurationSolverTests: XCTestCase {
         }
     }
 
+    func testInfectionPoints() {
+        let parameters: [(omega: Double, dampingRatio: Double, v0: Double)] = [
+            (1, 0.8, 0),
+            (2, 0.4, -1),
+            (3, 0.2, 5),
+        ]
+
+        let ks = 0 ..< 10
+
+        for p in parameters {
+            let curve = SpringCurve(response: 2 * Double.pi / p.omega, dampingRatio: p.dampingRatio, initialVelocity: p.v0)
+
+            for k in ks {
+                let stride = SettlingDurationSolver.underDampingInflectionPoints(of: curve)
+                let ddf = DerivativeTests.estimateDerivative(f: curve.derivativeCurveFunc, x: stride[k])
+
+                XCTAssertEqual(ddf, 0, accuracy: 1e-6)
+            }
+        }
+    }
+
     func testALot() throws {
         let omegas = [1.0, 10.0]
         let dampingRatios = [1.0]

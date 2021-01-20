@@ -92,6 +92,21 @@ struct SettlingDurationSolver {
         return Stride(x: (-phi + Double.pi / 2) / b, step: Double.pi / b)
     }
 
+    static func underDampingInflectionPoints(of curve: SpringCurve, epsilon: Double = 1e-8) -> Stride {
+        assert(curve.dampingRatio < 1.0)
+
+        let omega = curve.omega
+        let zeta = curve.dampingRatio
+        let v0 = curve.initialVelocity
+
+        let a = -omega * zeta
+        let b = omega * sqrt(1 - zeta * zeta)
+        let c2 = (v0 + a) / b
+
+        let psi = atan2(-2 * a * b - c2 * a * a + c2 * b * b, -a * a + b * b + 2 * c2 * a * b)
+        return Stride(x: (-psi + Double.pi / 2) / b, step: Double.pi / b)
+    }
+
     static func settlingDuration(curve: SpringCurve, alpha: Double = 1e-3) -> Double {
         do {
             if curve.dampingRatio == 1.0 {
