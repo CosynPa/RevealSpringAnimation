@@ -26,48 +26,86 @@ struct Stride {
 
 // Find the largest solution x that |x(x)| = alpha where x is the position from the equilibrium position.
 struct SettlingDurationSolver {
-    static func criticalDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double) throws -> Double {
-        assert(abs(curve.dampingRatio - 1.0) < epsilon)
+    static func criticalOverDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double) throws -> Double {
+        assert(curve.dampingRatio > 1 - epsilon)
         assert(0 < alpha && alpha < 1)
 
-        let v0 = curve.initialVelocity
         let omega = curve.omega
+        let zeta = curve.dampingRatio
+        let v0 = curve.initialVelocity
 
-        let c2 = v0 - omega
+        // x'(turning) = 0, the turning point, x''(inflection) = 0, the inflection point
+        let points: (turning: Double, inflection: Double)?
+        let increaseToInfinity: Bool // Whether x'(t) > 0 for t > t1
 
-        if abs(c2) < epsilon {
-            // The equation becomes x(t) = -exp(-omega * t)
-            return -log(alpha) / curve.omega
+        let criticalDamping = abs(zeta - 1) < epsilon
+        if criticalDamping {
+            let c2 = v0 - omega
+
+            if abs(c2) < epsilon {
+                // The equation becomes x(t) = -exp(-omega * t)
+                return -log(alpha) / curve.omega
+            }
+
+            let inflection = (2 * c2 + omega) / omega / c2
+            let turning = inflection - 1 / omega
+
+            points = (turning, inflection)
+            increaseToInfinity = c2 < 0
         } else {
-            // x''(t2) = 0, the inflection point
-            let t2 = (2 * c2 + omega) / omega / c2
+            let s1 = omega * (-zeta + sqrt(zeta * zeta - 1))
+            let s2 = omega * (-zeta - sqrt(zeta * zeta - 1))
+            let c1 = (-s2 - v0) / (s2 - s1)
+            let c2 = (s1 + v0) / (s2 - s1)
 
-            // x'(t1) = 0, the turning point
-            let t1 = t2 - 1 / omega
+            if abs(c1) < epsilon {
+                // The equation becomes x(t) = c2 * exp(s2 * t)
+                return log(-alpha / c2) / s2
+            } else if abs(c2) < epsilon {
+                // The equation becomes x(t) = c1 * exp(s1 * t)
+                return log(-alpha / c1) / s1
+            }
 
-            if abs(curve.curveFunc(t1) - 1) == alpha {
-                return t1
-            } else if abs(curve.curveFunc(t1) - 1) > alpha {
-                // |x(t1)| > alpha, has solution between t1 and infinity
-                // Since t1 is the turning point, the solution is unique
+            if c1 * c2 < 0 {
+                let turning = log(-c2 * s2 / c1 / s1) / (s1 - s2)
+                let inflection = log(-c2 * s2 * s2 / c1 / s1 / s1) / (s1 - s2)
+                points = (turning, inflection)
+                increaseToInfinity = c1 < 0
+            } else {
+                points = nil
+                increaseToInfinity = true
+            }
+        }
+
+        if let points = points {
+            if abs(curve.curveFunc(points.turning) - 1) == alpha {
+                return points.turning
+            } else if abs(curve.curveFunc(points.turning) - 1) > alpha {
+                // |x(turning)| > alpha, has solution between `turning` and infinity
+                // Since `turning` is the turning point, the solution is unique
 
                 let f: (Double) -> Double
-                if c2 < 0 {
+                if increaseToInfinity {
                     f = { t in curve.curveFunc(t) - 1 + alpha }
                 } else {
                     f = { t in curve.curveFunc(t) - 1 - alpha }
                 }
 
-                return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: t2)
+                return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: points.inflection)
             } else {
-                // |x(0)| = 1 > alpha, |x(t1)| < alpha, has solution between 0 and t1
-                // Since t1 is the turning point, the solution is unique
+                // |x(0)| = 1 > alpha, |x(turning)| < alpha, has solution between 0 and `turning`
+                // Since `turning` is the turning point, the solution is unique
 
-                assert(c2 > 0) // because if c2 < 0, x(t1) < -1
+                // because if increaseToInfinity, decrease to the turning point, so x(turning) < -1
+                assert(!increaseToInfinity)
 
                 let f: (Double) -> Double = { t in curve.curveFunc(t) - 1 + alpha }
                 return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: 0)
             }
+        } else {
+            assert(increaseToInfinity)
+            let f: (Double) -> Double = { t in curve.curveFunc(t) - 1 + alpha }
+            return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: 0)
         }
     }
 
@@ -148,11 +186,8 @@ struct SettlingDurationSolver {
 
     static func settlingDuration(curve: SpringCurve, alpha: Double = 1e-3, epsilon: Double = 1e-8) -> Double {
         do {
-            if abs(curve.dampingRatio - 1.0) < epsilon {
-                return try Self.criticalDampingSolve(curve: curve, alpha: alpha, epsilon: epsilon)
-            } else if curve.dampingRatio >= 1 + epsilon {
-                // TODO
-                return 0
+            if curve.dampingRatio > 1 - epsilon {
+                return try Self.criticalOverDampingSolve(curve: curve, alpha: alpha, epsilon: epsilon)
             } else {
                 return try Self.underDampingSolve(curve: curve, alpha: alpha, epsilon: epsilon)
             }
