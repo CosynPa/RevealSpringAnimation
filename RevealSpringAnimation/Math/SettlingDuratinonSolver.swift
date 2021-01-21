@@ -42,8 +42,14 @@ struct SettlingDurationSolver {
             // x''(t2) = 0, the inflection point
             let t2 = (2 * c2 + omega) / omega / c2
 
-            if abs(curve.curveFunc(t2) - 1) > alpha {
-                // The sign of x''(t) doesn't change when t > t2, can use Newton's method
+            // x'(t1) = 0, the turning point
+            let t1 = t2 - 1 / omega
+
+            if abs(curve.curveFunc(t1) - 1) == alpha {
+                return t1
+            } else if abs(curve.curveFunc(t1) - 1) > alpha {
+                // |x(t1)| > alpha, has solution between t1 and infinity
+                // Since t1 is the turning point, the solution is unique
 
                 let f: (Double) -> Double
                 if c2 < 0 {
@@ -54,32 +60,13 @@ struct SettlingDurationSolver {
 
                 return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: t2)
             } else {
-                // x'(t1) = 0, the turning point
-                let t1 = t2 - 1 / omega
+                // |x(0)| = 1 > alpha, |x(t1)| < alpha, has solution between 0 and t1
+                // Since t1 is the turning point, the solution is unique
 
-                if abs(curve.curveFunc(t1) - 1) == alpha {
-                    return t1
-                } else if abs(curve.curveFunc(t1) - 1) > alpha {
-                    // |x(t1)| > alpha, |x(t2)| <= alpha, has solution between t1 and t2
-                    // Since t1 is the turning point, the solution is unique
+                assert(c2 > 0) // because if c2 < 0, x(t1) < -1
 
-                    let f: (Double) -> Double
-                    if c2 < 0 {
-                        f = { t in curve.curveFunc(t) - 1 + alpha }
-                    } else {
-                        f = { t in curve.curveFunc(t) - 1 - alpha }
-                    }
-
-                    return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: t2)
-                } else {
-                    // |x(0)| = 1 > alpha, |x(t1)| <= alpha, has solution between 0 and t1
-                    // Since t1 is the turning point, the solution is unique
-
-                    assert(c2 > 0) // because if c2 < 0, x(t1) < -1
-
-                    let f: (Double) -> Double = { t in curve.curveFunc(t) - 1 + alpha }
-                    return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: 0)
-                }
+                let f: (Double) -> Double = { t in curve.curveFunc(t) - 1 + alpha }
+                return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: 0)
             }
         }
     }
