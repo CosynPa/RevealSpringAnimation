@@ -141,7 +141,7 @@ class SettlingDurationSolverTests: XCTestCase {
     func testALot() throws {
         let omegas = [1.0, 10.0]
         let dampingRatios = [0.1, 0.7, 1.0, 1.25, 3]
-        let v0s = stride(from: -100.0, through: 100.0, by: 10.0)
+        let v0s = stride(from: -20.0, through: 20.0, by: 2.0)
         let alphas = stride(from: 0.001, to: 0.9, by: 0.02)
 
         for omega in omegas {
