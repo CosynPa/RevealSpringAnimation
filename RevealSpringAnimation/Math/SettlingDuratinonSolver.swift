@@ -26,7 +26,7 @@ struct Stride {
 
 // Find the largest solution x that |x(x)| = alpha where x is the position from the equilibrium position.
 struct SettlingDurationSolver {
-    static func criticalDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double = 1e-8) throws -> Double {
+    static func criticalDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double) throws -> Double {
         assert(curve.dampingRatio == 1.0)
         assert(0 < alpha && alpha < 1)
 
@@ -84,7 +84,7 @@ struct SettlingDurationSolver {
         }
     }
 
-    static func underDampingTurningPoints(of curve: SpringCurve, epsilon: Double = 1e-8) -> Stride {
+    static func underDampingTurningPoints(of curve: SpringCurve, epsilon: Double) -> Stride {
         assert(curve.dampingRatio < 1.0)
 
         let omega = curve.omega
@@ -99,7 +99,7 @@ struct SettlingDurationSolver {
         return Stride(x: (-phi + Double.pi / 2) / b, step: Double.pi / b)
     }
 
-    static func underDampingInflectionPoints(of curve: SpringCurve, epsilon: Double = 1e-8) -> Stride {
+    static func underDampingInflectionPoints(of curve: SpringCurve, epsilon: Double) -> Stride {
         assert(curve.dampingRatio < 1.0)
 
         let omega = curve.omega
@@ -114,7 +114,7 @@ struct SettlingDurationSolver {
         return Stride(x: (-psi + Double.pi / 2) / b, step: Double.pi / b)
     }
 
-    static func underDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double = 1e-8) throws -> Double {
+    static func underDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double) throws -> Double {
         assert(curve.dampingRatio < 1.0)
         assert(0 < alpha && alpha < 1)
 
@@ -129,7 +129,7 @@ struct SettlingDurationSolver {
         // For any t >= t3, |x(t)| <= alpha
         let t3 = log(alpha / sqrt(1 + c2 * c2)) / a
 
-        let turningPoints = underDampingTurningPoints(of: curve)
+        let turningPoints = underDampingTurningPoints(of: curve, epsilon: epsilon)
         let k3 = turningPoints.k(before: t3)
 
         let k1 = stride(from: k3, to: Int.min, by: -1)
@@ -143,7 +143,7 @@ struct SettlingDurationSolver {
 
         // The solution is between turningPoints[k1] and turningPoints[k1 + 1]
 
-        let inflectionPoints = underDampingInflectionPoints(of: curve)
+        let inflectionPoints = underDampingInflectionPoints(of: curve, epsilon: epsilon)
         let k2 = inflectionPoints.k(before: turningPoints[k1 + 1])
 
         // Because the steps of turningPoints and inflectionPoints are the same
@@ -159,15 +159,15 @@ struct SettlingDurationSolver {
         return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: inflectionPoints[k2])
     }
 
-    static func settlingDuration(curve: SpringCurve, alpha: Double = 1e-3) -> Double {
+    static func settlingDuration(curve: SpringCurve, alpha: Double = 1e-3, epsilon: Double = 1e-8) -> Double {
         do {
             if curve.dampingRatio == 1.0 {
-                return try Self.criticalDampingSolve(curve: curve, alpha: alpha)
+                return try Self.criticalDampingSolve(curve: curve, alpha: alpha, epsilon: epsilon)
             } else if curve.dampingRatio > 1 {
                 // TODO
                 return 0
             } else {
-                return try Self.underDampingSolve(curve: curve, alpha: alpha)
+                return try Self.underDampingSolve(curve: curve, alpha: alpha, epsilon: epsilon)
             }
         } catch {
             return 0

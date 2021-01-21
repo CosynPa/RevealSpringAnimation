@@ -20,11 +20,11 @@ class SettlingDurationSolverTests: XCTestCase {
             let curve = SpringCurve(response: 2 * Double.pi / p.omega, dampingRatio: p.dampingRatio, initialVelocity: p.v0)
 
             let alpha = 1e-3
-            let t = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha)
+            let t = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha, epsilon: 1e-8)
             testSolution(t: t, curve: curve, alpha: alpha)
 
             let alpha2 = 0.8
-            let t2 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2)
+            let t2 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2, epsilon: 1e-8)
             testSolution(t: t2, curve: curve, alpha: alpha2)
         }
     }
@@ -44,12 +44,12 @@ class SettlingDurationSolverTests: XCTestCase {
 
         // When the value at t2 is less than alpha
         let alpha1 = 0.12
-        let t_alpha1 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha1)
+        let t_alpha1 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha1, epsilon: 1e-8)
         testSolution(t: t_alpha1, curve: curve, alpha: alpha1)
 
         // When the value at t1 is less than alpha
         let alpha2 = 0.15
-        let t_alpha2 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2)
+        let t_alpha2 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2, epsilon: 1e-8)
         testSolution(t: t_alpha2, curve: curve, alpha: alpha2)
     }
 
@@ -66,7 +66,7 @@ class SettlingDurationSolverTests: XCTestCase {
             let curve = SpringCurve(response: 2 * Double.pi / p.omega, dampingRatio: p.dampingRatio, initialVelocity: p.v0)
 
             for k in ks {
-                let stride = SettlingDurationSolver.underDampingTurningPoints(of: curve)
+                let stride = SettlingDurationSolver.underDampingTurningPoints(of: curve, epsilon: 1e-8)
                 let df = curve.derivativeCurveFunc(stride[k])
 
                 XCTAssertEqual(df, 0, accuracy: 1e-6)
@@ -87,7 +87,7 @@ class SettlingDurationSolverTests: XCTestCase {
             let curve = SpringCurve(response: 2 * Double.pi / p.omega, dampingRatio: p.dampingRatio, initialVelocity: p.v0)
 
             for k in ks {
-                let stride = SettlingDurationSolver.underDampingInflectionPoints(of: curve)
+                let stride = SettlingDurationSolver.underDampingInflectionPoints(of: curve, epsilon: 1e-8)
                 let ddf = DerivativeTests.estimateDerivative(f: curve.derivativeCurveFunc, x: stride[k])
 
                 XCTAssertEqual(ddf, 0, accuracy: 1e-6)
@@ -119,7 +119,7 @@ class SettlingDurationSolverTests: XCTestCase {
         for (omega, dampingRatio, v0, alpha, t) in parameters {
             let curve = SpringCurve(response: 2 * Double.pi / omega, dampingRatio: dampingRatio, initialVelocity: v0)
 
-            let t0 = try SettlingDurationSolver.underDampingSolve(curve: curve, alpha: alpha)
+            let t0 = try SettlingDurationSolver.underDampingSolve(curve: curve, alpha: alpha, epsilon: 1e-8)
             XCTAssertEqual(t0, t, accuracy: 0.01)
         }
     }
