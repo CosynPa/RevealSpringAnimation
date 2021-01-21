@@ -59,7 +59,7 @@ struct SpringCurve {
 
     init(_ p: SpringParameter.InterpolatingSpring) {
         let response = 2 * Double.pi / sqrt(p.stiffness / max(1e-5, p.mass))
-        let dampingRatio = p.damping / 2 / sqrt(p.stiffness * p.mass)
+        let dampingRatio = min(1.0, p.damping / 2 / sqrt(p.stiffness * p.mass))
         self.init(response: response,
                   dampingRatio: dampingRatio,
                   initialVelocity: p.initialVelocity)
