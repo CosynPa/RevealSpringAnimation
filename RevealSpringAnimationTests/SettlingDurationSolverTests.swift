@@ -19,13 +19,9 @@ class SettlingDurationSolverTests: XCTestCase {
         for p in parameters {
             let curve = SpringCurve(response: 2 * Double.pi / p.omega, dampingRatio: p.dampingRatio, initialVelocity: p.v0)
 
-            let alpha = 1e-3
-            let t = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha, epsilon: 1e-8)
-            testSolution(t: t, curve: curve, alpha: alpha)
+            testSolution(curve: curve, alpha: 1e-3)
 
-            let alpha2 = 0.8
-            let t2 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2, epsilon: 1e-8)
-            testSolution(t: t2, curve: curve, alpha: alpha2)
+            testSolution(curve: curve, alpha: 0.8)
         }
     }
 
@@ -42,19 +38,14 @@ class SettlingDurationSolverTests: XCTestCase {
         let t2 = 1.5
         assert(abs(curve.curveFunc(t2) - 1.0996) < 1e-4)
 
-        func test(alpha: Double) throws {
-            let t = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha, epsilon: 1e-8)
-            testSolution(t: t, curve: curve, alpha: alpha)
-        }
-
         // When the value at t2 is greater than alpha
-        try test(alpha: 0.05)
+        testSolution(curve: curve, alpha: 0.05)
 
         // When the value at t2 is less than alpha
-        try test(alpha: 0.12)
+        testSolution(curve: curve, alpha: 0.12)
 
         // When the value at t1 is less than alpha
-        try test(alpha: 0.15)
+        testSolution(curve: curve, alpha: 0.15)
     }
 
     func testTurningPoints() {
@@ -125,7 +116,7 @@ class SettlingDurationSolverTests: XCTestCase {
 
             let t0 = try SettlingDurationSolver.underDampingSolve(curve: curve, alpha: alpha, epsilon: 1e-8)
             XCTAssertEqual(t0, t, accuracy: 0.01)
-            testSolution(t: t0, curve: curve, alpha: alpha)
+            testSolution(curve: curve, alpha: alpha)
         }
     }
 
@@ -140,8 +131,7 @@ class SettlingDurationSolverTests: XCTestCase {
                 for v0 in v0s {
                     for alpha in alphas {
                         let curve = SpringCurve(response: 2 * Double.pi / omega, dampingRatio: d, initialVelocity: v0)
-                        let t = SettlingDurationSolver.settlingDuration(curve: curve, alpha: alpha)
-                        testSolution(t: t, curve: curve, alpha: alpha)
+                        testSolution(curve: curve, alpha: alpha)
                     }
                 }
             }
@@ -149,7 +139,9 @@ class SettlingDurationSolverTests: XCTestCase {
 
     }
 
-    func testSolution(t: Double, curve: SpringCurve, alpha: Double) {
+    func testSolution(curve: SpringCurve, alpha: Double) {
+        let t = SettlingDurationSolver.settlingDuration(curve: curve, alpha: alpha, epsilon: 1e-8)
+
         XCTAssertEqual(abs(curve.curveFunc(t) - 1), alpha, accuracy: 1e-6)
 
         let step = 0.01 * curve.response
