@@ -27,7 +27,7 @@ struct Stride {
 // Find the largest solution x that |x(x)| = alpha where x is the position from the equilibrium position.
 struct SettlingDurationSolver {
     static func criticalDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double) throws -> Double {
-        assert(curve.dampingRatio == 1.0)
+        assert(abs(curve.dampingRatio - 1.0) < epsilon)
         assert(0 < alpha && alpha < 1)
 
         let v0 = curve.initialVelocity
@@ -161,9 +161,9 @@ struct SettlingDurationSolver {
 
     static func settlingDuration(curve: SpringCurve, alpha: Double = 1e-3, epsilon: Double = 1e-8) -> Double {
         do {
-            if curve.dampingRatio == 1.0 {
+            if abs(curve.dampingRatio - 1.0) < epsilon {
                 return try Self.criticalDampingSolve(curve: curve, alpha: alpha, epsilon: epsilon)
-            } else if curve.dampingRatio > 1 {
+            } else if curve.dampingRatio >= 1 + epsilon {
                 // TODO
                 return 0
             } else {
