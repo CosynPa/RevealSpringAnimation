@@ -42,15 +42,19 @@ class SettlingDurationSolverTests: XCTestCase {
         let t2 = 1.5
         assert(abs(curve.curveFunc(t2) - 1.0996) < 1e-4)
 
+        func test(alpha: Double) throws {
+            let t = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha, epsilon: 1e-8)
+            testSolution(t: t, curve: curve, alpha: alpha)
+        }
+
+        // When the value at t2 is greater than alpha
+        try test(alpha: 0.05)
+
         // When the value at t2 is less than alpha
-        let alpha1 = 0.12
-        let t_alpha1 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha1, epsilon: 1e-8)
-        testSolution(t: t_alpha1, curve: curve, alpha: alpha1)
+        try test(alpha: 0.12)
 
         // When the value at t1 is less than alpha
-        let alpha2 = 0.15
-        let t_alpha2 = try SettlingDurationSolver.criticalDampingSolve(curve: curve, alpha: alpha2, epsilon: 1e-8)
-        testSolution(t: t_alpha2, curve: curve, alpha: alpha2)
+        try test(alpha: 0.15)
     }
 
     func testTurningPoints() {
