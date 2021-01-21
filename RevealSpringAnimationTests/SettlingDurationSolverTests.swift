@@ -121,6 +121,7 @@ class SettlingDurationSolverTests: XCTestCase {
 
             let t0 = try SettlingDurationSolver.underDampingSolve(curve: curve, alpha: alpha, epsilon: 1e-8)
             XCTAssertEqual(t0, t, accuracy: 0.01)
+            testSolution(t: t0, curve: curve, alpha: alpha)
         }
     }
 
