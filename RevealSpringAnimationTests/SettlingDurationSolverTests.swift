@@ -25,6 +25,24 @@ class SettlingDurationSolverTests: XCTestCase {
         }
     }
 
+    func testOverDamping() throws {
+        let parameters: [(omega: Double, dampingRatio: Double, v0: Double)] = [
+            (1, 1.25, -1),
+            (1, 1.25, 0.5), // c2 = 0
+            (1, 1.25, 1),
+            (1, 1.25, 2), // c1 = 0
+            (1, 1.25, 3)
+        ]
+
+        for p in parameters {
+            let curve = SpringCurve(response: 2 * Double.pi / p.omega, dampingRatio: p.dampingRatio, initialVelocity: p.v0)
+
+            testSolution(curve: curve, alpha: 1e-3)
+
+            testSolution(curve: curve, alpha: 0.8)
+        }
+    }
+
     func testCriticalDampingSmallInflectionPoint() throws {
         let omega = 2.0
         let curve = SpringCurve(response: 2 * Double.pi / omega, dampingRatio: 1, initialVelocity: 4)
@@ -122,7 +140,7 @@ class SettlingDurationSolverTests: XCTestCase {
 
     func testALot() throws {
         let omegas = [1.0, 10.0]
-        let dampingRatios = [0.1, 0.7, 1.0]
+        let dampingRatios = [0.1, 0.7, 1.0, 1.25, 3]
         let v0s = stride(from: -100.0, through: 100.0, by: 10.0)
         let alphas = stride(from: 0.001, to: 0.9, by: 0.02)
 
