@@ -44,8 +44,7 @@ struct SpringCurve {
     }
 
     var settlingDuration: Double {
-        // TODO:
-        return response
+        return SettlingDurationSolver.settlingDuration(curve: self, alpha: 1e-3, epsilon: 1e-8)
     }
 
     init(response: Double, dampingRatio: Double, initialVelocity: Double) {

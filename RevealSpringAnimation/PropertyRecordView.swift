@@ -196,6 +196,8 @@ class UIAnimationController<RecordingValue> {
                 view.square.layer.add(animation, forKey: "keyFrameSpring")
 
                 view.square.layer.position = CGPoint(x: 50, y: toY)
+
+                print("Custom settling duration: \(curveValue.settlingDuration)")
             }
         } else {
             view.square.layer.removeAllAnimations()

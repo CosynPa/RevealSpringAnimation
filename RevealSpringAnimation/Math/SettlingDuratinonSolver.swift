@@ -184,7 +184,7 @@ struct SettlingDurationSolver {
         return try NewtonSolver.solve(f: f, df: curve.derivativeCurveFunc, x0: inflectionPoints[k2])
     }
 
-    static func settlingDuration(curve: SpringCurve, alpha: Double = 1e-3, epsilon: Double = 1e-8) -> Double {
+    static func settlingDuration(curve: SpringCurve, alpha: Double, epsilon: Double = 1e-8) -> Double {
         do {
             if curve.dampingRatio > 1 - epsilon {
                 return try Self.criticalOverDampingSolve(curve: curve, alpha: alpha, epsilon: epsilon)
