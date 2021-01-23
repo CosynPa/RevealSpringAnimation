@@ -163,7 +163,7 @@ struct RecordControllerVM {
 
         }
 
-        return Just(()).delay(for: .seconds(recordDuration), scheduler: RunLoop.main)
+        return Just(()).delay(for: .seconds(recordDuration), scheduler: DispatchQueue.main)
             .sink { () in
                 onStopTime()
             }
