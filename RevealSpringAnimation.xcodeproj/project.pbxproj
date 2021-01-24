@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7E1212CB25AB50260018189A /* RecordCompareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1212CA25AB50260018189A /* RecordCompareView.swift */; };
 		7E1212CE25AC09F60018189A /* SpringCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1212CD25AC09F50018189A /* SpringCurve.swift */; };
+		7E1BD37425BDBD9700BD8604 /* MixedCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1BD37325BDBD9700BD8604 /* MixedCurve.swift */; };
 		7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3BADFA258F0C4300F5D810 /* RevealSpringAnimationApp.swift */; };
 		7E3BADFD258F0C4300F5D810 /* RecordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3BADFC258F0C4300F5D810 /* RecordController.swift */; };
 		7E3BADFF258F0C4E00F5D810 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BADFE258F0C4E00F5D810 /* Assets.xcassets */; };
@@ -39,6 +40,7 @@
 /* Begin PBXFileReference section */
 		7E1212CA25AB50260018189A /* RecordCompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCompareView.swift; sourceTree = "<group>"; };
 		7E1212CD25AC09F50018189A /* SpringCurve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringCurve.swift; sourceTree = "<group>"; };
+		7E1BD37325BDBD9700BD8604 /* MixedCurve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedCurve.swift; sourceTree = "<group>"; };
 		7E3BADF7258F0C4300F5D810 /* RevealSpringAnimation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RevealSpringAnimation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E3BADFA258F0C4300F5D810 /* RevealSpringAnimationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealSpringAnimationApp.swift; sourceTree = "<group>"; };
 		7E3BADFC258F0C4300F5D810 /* RecordController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordController.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */,
 				7ED510A125B4290C006F16CC /* BinarySearchSolver.swift */,
 				7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */,
+				7E1BD37325BDBD9700BD8604 /* MixedCurve.swift */,
 			);
 			path = Math;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 				7ED510C025B43266006F16CC /* SettlingDuratinonSolver.swift in Sources */,
 				7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */,
 				7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */,
+				7E1BD37425BDBD9700BD8604 /* MixedCurve.swift in Sources */,
 				7E1212CB25AB50260018189A /* RecordCompareView.swift in Sources */,
 				7E1212CE25AC09F60018189A /* SpringCurve.swift in Sources */,
 				7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */,

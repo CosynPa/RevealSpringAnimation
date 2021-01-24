@@ -136,7 +136,9 @@ struct RecordControllerVM {
                 // synchronize
                 recorders.uikitController.setOffset(offset, animator: nil)
 
-                recorders.customController.setOffset(offset, animator: .right(SpringCurve(parameter.springValue)))
+                recorders.customController.setOffset(offset,
+                                                     animator: .right(SpringCurve(parameter.springValue)),
+                                                     mixStrategy: .keepVelocity)
             case .interpolatingSpring:
                 withAnimation(try parameter.animation()) {
                     offset.toggle()
@@ -145,7 +147,9 @@ struct RecordControllerVM {
                 // synchronize
                 recorders.uikitController.setOffset(offset, animator: nil)
 
-                recorders.customController.setOffset(offset, animator: .right(SpringCurve(parameter.interpolatingSpringValue)))
+                recorders.customController.setOffset(offset,
+                                                     animator: .right(SpringCurve(parameter.interpolatingSpringValue)),
+                                                     mixStrategy: .compose)
 
             case .uikit:
                 offset.toggle()
