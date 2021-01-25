@@ -103,7 +103,9 @@ class PropertyRecorder<RecordingValue> {
         let now = recordingLink.link.timestamp
         let value = recording(view)
 
-        recordingValues.append((now - start, value))
+        if now - start > 0 { // Maybe negative since timestamp is the last frame
+            recordingValues.append((now - start, value))
+        }
     }
 }
 

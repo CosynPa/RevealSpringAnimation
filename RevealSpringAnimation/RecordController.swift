@@ -22,6 +22,8 @@ class Recorders: ObservableObject {
     let customRecorder: PropertyRecorder<CGFloat>
     let customController: UIAnimationController<CGFloat>
 
+    private var bag = Set<AnyCancellable>()
+
     init() {
         recorder = PropertyRecorder<CGFloat> { (view) -> CGFloat in
             guard let layer = view.layer.presentation() else {
@@ -30,6 +32,10 @@ class Recorders: ObservableObject {
             }
             return layer.convert(CGPoint.zero, to: nil).y
         }
+
+        recorder.record.sink { (record) in
+            RecordCollector.shared.systemAnimationRecord = record
+        }.store(in: &bag)
 
         uikitController = UIAnimationController(recorder: recorder, offset: false)
 
@@ -40,7 +46,11 @@ class Recorders: ObservableObject {
             }
             return layer.convert(CGPoint.zero, to: nil).y
         }
-        customRecorder.shouldRecord = false
+
+        customRecorder.record.sink { (record) in
+            RecordCollector.shared.customAnimationRecord = record
+        }.store(in: &bag)
+
         customController = UIAnimationController(recorder: customRecorder, offset: false)
     }
 }
@@ -104,7 +114,7 @@ struct RecordControllerVM {
     }
 
     func onShouldRecordChange(_ newShouldRecord: Bool) {
-        recorders.recorder.shouldRecord = newShouldRecord
+        RecordCollector.shared.printRecord = newShouldRecord
     }
 
     private func onStopTime() {
@@ -257,13 +267,6 @@ struct RecordController: View {
                 }
             }
             .padding()
-        }
-        .onReceive(recorders.recorder.record) { record in
-            print(record)
-        }
-        .onReceive(recorders.customRecorder.record) { record in
-            print("Custom animation record")
-            print(record)
         }
     }
 }
