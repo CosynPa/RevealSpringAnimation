@@ -216,10 +216,12 @@ class UIAnimationController<RecordingValue> {
                     function = SimpleCurve(curve: curveValue, from: fromY, to: toY)
                 }
 
-                let keyTimes: [Double] = Array(stride(from: 0.0, to: function.settlingDuration, by: 1 / Double(UIScreen.main.maximumFramesPerSecond)))
+                let settlingDuration = function.settlingDuration
+
+                let keyTimes: [Double] = Array(stride(from: 0.0, to: settlingDuration, by: 1 / Double(UIScreen.main.maximumFramesPerSecond)))
                 animation.keyTimes = keyTimes
                     .map { time -> Double in
-                        let normalTime = time / function.settlingDuration
+                        let normalTime = time / settlingDuration
                         return normalTime
                     } as [NSNumber]
 
@@ -229,13 +231,13 @@ class UIAnimationController<RecordingValue> {
                     }
 
                 animation.keyPath = #keyPath(CALayer.position)
-                animation.duration = function.settlingDuration
+                animation.duration = settlingDuration
 
                 view.square.layer.add(animation, forKey: "keyFrameSpring")
 
                 view.square.layer.position = CGPoint(x: 50, y: toY)
 
-                print("Custom settling duration: \(function.settlingDuration)")
+                print("Custom settling duration: \(settlingDuration)")
 
                 previous = (function, CACurrentMediaTime())
             }
