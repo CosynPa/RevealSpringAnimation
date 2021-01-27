@@ -10,7 +10,7 @@ import SwiftUI
 struct RecordCompareView: View {
     var recorders: Recorders
 
-    @Binding var type: SpringParameter.SpringType
+    @Binding var type: SpringType
     @Binding var offset: Bool
 
     @ViewBuilder

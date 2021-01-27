@@ -58,7 +58,7 @@ class Recorders: ObservableObject {
 struct RecordControllerVM {
     @Binding var state: RecordingState
 
-    @Binding var parameter: SpringParameter
+    @MultiSpringParameterEdit var parameter: MultiSpringParameter
     @Binding var recordDuration: Double
     @Binding var offset: Bool
 
@@ -136,45 +136,38 @@ struct RecordControllerVM {
         recorders.recorder.startRecord()
         recorders.customRecorder.startRecord()
 
-        do {
-            switch parameter.type {
-            case .spring:
-                withAnimation(try parameter.animation()) {
-                    offset.toggle()
-                }
-
-                // synchronize
-                recorders.uikitController.setOffset(offset, animator: nil)
-
-                recorders.customController.setOffset(offset,
-                                                     animator: .right(SpringCurve(parameter.springValue)),
-                                                     mixStrategy: .keepVelocity)
-            case .interpolatingSpring:
-                withAnimation(try parameter.animation()) {
-                    offset.toggle()
-                }
-
-                // synchronize
-                recorders.uikitController.setOffset(offset, animator: nil)
-
-                recorders.customController.setOffset(offset,
-                                                     animator: .right(SpringCurve(parameter.interpolatingSpringValue)),
-                                                     mixStrategy: .compose)
-
-            case .uikit:
+        switch parameter {
+        case .spring(let springValue):
+            withAnimation(springValue.animation) {
                 offset.toggle()
-                recorders.uikitController.setOffset(offset, animator: .left(parameter.uikitValue))
-                recorders.customController.setOffset(offset, animator: .right(SpringCurve(parameter.uikitValue)))
-            case .coreAnimation:
-                offset.toggle()
-                recorders.uikitController.setOffset(offset, animator: .mid(parameter.caValue))
-                recorders.customController.setOffset(offset, animator: .right(SpringCurve(parameter.caValue)))
             }
-        } catch let error as SpringParameter.TypeMissmatchError {
-            print("Error:")
-            print(error.message)
-        } catch {
 
+            // synchronize
+            recorders.uikitController.setOffset(offset, animator: nil)
+
+            recorders.customController.setOffset(offset,
+                                                 animator: .right(SpringCurve(springValue)),
+                                                 mixStrategy: .keepVelocity)
+        case .interpolatingSpring(let interpolatingSpringValue):
+            withAnimation(interpolatingSpringValue.animation) {
+                offset.toggle()
+            }
+
+            // synchronize
+            recorders.uikitController.setOffset(offset, animator: nil)
+
+            recorders.customController.setOffset(offset,
+                                                 animator: .right(SpringCurve(interpolatingSpringValue)),
+                                                 mixStrategy: .compose)
+
+        case .uikit(let uikitValue):
+            offset.toggle()
+            recorders.uikitController.setOffset(offset, animator: .left(uikitValue))
+            recorders.customController.setOffset(offset, animator: .right(SpringCurve(uikitValue)))
+        case .coreAnimation(let caValue):
+            offset.toggle()
+            recorders.uikitController.setOffset(offset, animator: .mid(caValue))
+            recorders.customController.setOffset(offset, animator: .right(SpringCurve(caValue)))
         }
 
         return Just(()).delay(for: .seconds(recordDuration), scheduler: DispatchQueue.main)
@@ -214,7 +207,7 @@ struct RecordController: View {
 
     @State var shouldRecord = true
 
-    @State var parameter = SpringParameter()
+    @MultiSpringParameterEdit var parameter: MultiSpringParameter
     @State var recordDuration = 2.0
     @State var offset = false
 
@@ -230,14 +223,14 @@ struct RecordController: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            RecordCompareView(recorders: recorders, type: $parameter.type, offset: $offset)
+            RecordCompareView(recorders: recorders, type: $parameter.$type, offset: $offset)
                 .padding()
 
             ZStack(alignment: .top) {
                 Color.clear
                 VStack {
-                    SpringParameterController(parameter: $parameter)
-                        .onChange(of: parameter.type) { _ in
+                    MultiSpringParameterController(editingParameter: $parameter)
+                        .onChange(of: $parameter.type) { _ in
                             vm.onSwitchType()
                         }
 

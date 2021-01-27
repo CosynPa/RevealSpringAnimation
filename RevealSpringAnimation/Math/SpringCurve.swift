@@ -53,11 +53,11 @@ struct SpringCurve {
         self.initialVelocity = initialVelocity
     }
 
-    init(_ p: SpringParameter.Spring) {
+    init(_ p: Spring) {
         self.init(response: p.response, dampingRatio: p.dampingFraction, initialVelocity: 0.0)
     }
 
-    init(_ p: SpringParameter.InterpolatingSpring) {
+    init(_ p: InterpolatingSpring) {
         let response = 2 * Double.pi / sqrt(p.stiffness / max(1e-5, p.mass))
         let dampingRatio = min(1.0, p.damping / 2 / sqrt(p.stiffness * p.mass))
         self.init(response: response,
@@ -65,13 +65,13 @@ struct SpringCurve {
                   initialVelocity: p.initialVelocity)
     }
 
-    init(_ p: SpringParameter.UIKitSpring) {
+    init(_ p: UIKitSpring) {
         self.init(response: p.duration, // TODO:
                   dampingRatio: min(1.0, p.dampingRatio),
                   initialVelocity: p.initialVelocity)
     }
 
-    init(_ p: SpringParameter.CASpring) {
+    init(_ p: CASpring) {
         let response = 2 * Double.pi / sqrt(p.stiffness / max(1e-5, p.mass))
         var dampingRatio = p.damping / 2 / sqrt(p.stiffness * p.mass)
         dampingRatio = min(1.0, dampingRatio)

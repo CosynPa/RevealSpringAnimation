@@ -8,99 +8,155 @@
 import SwiftUI
 import UIKit
 
-struct SpringParameter {
-    enum SpringType: Hashable, CaseIterable {
-        case spring
-        case interpolatingSpring
-        case uikit
-        case coreAnimation
+enum SpringType: Hashable, CaseIterable, Equatable {
+    case spring
+    case interpolatingSpring
+    case uikit
+    case coreAnimation
 
-        var name: LocalizedStringKey {
-            switch self {
+    var name: LocalizedStringKey {
+        switch self {
+        case .spring:
+            return "Spring"
+        case .interpolatingSpring:
+            return "Interpolating Spring"
+        case .uikit:
+            return "UIKit"
+        case .coreAnimation:
+            return "Core Animation"
+        }
+    }
+}
+
+struct Spring {
+    var response: Double = 0.55
+    var dampingFraction: Double = 0.825
+    var blendDuration: Double = 0
+
+    var animation: Animation {
+        .spring(
+            response: response,
+            dampingFraction: dampingFraction,
+            blendDuration: blendDuration
+        )
+    }
+}
+
+struct InterpolatingSpring {
+    var mass: Double = 1.0
+    var stiffness: Double = 1.0
+    var damping: Double = 1.0
+    var initialVelocity: Double = 0.0
+
+    var animation: Animation {
+        .interpolatingSpring(
+            mass: mass,
+            stiffness: stiffness,
+            damping: damping,
+            initialVelocity: initialVelocity
+        )
+    }
+}
+
+struct UIKitSpring {
+    var duration: Double = 0.5
+    var dampingRatio: Double = 1.0
+    var initialVelocity: Double = 0.0
+}
+
+struct CASpring {
+    var mass: Double = 1.0
+    var stiffness: Double = 1.0
+    var damping: Double = 1.0
+    var initialVelocity: Double = 0.0
+}
+
+enum MultiSpringParameter {
+    case spring(Spring)
+    case interpolatingSpring(InterpolatingSpring)
+    case uikit(UIKitSpring)
+    case coreAnimation(CASpring)
+}
+
+@propertyWrapper
+struct MultiSpringParameterEdit: DynamicProperty {
+    var wrappedValue: MultiSpringParameter {
+        switch type {
+        case .spring:
+            return .spring(springValue)
+        case .interpolatingSpring:
+            return .interpolatingSpring(interpolatingSpringValue)
+        case .uikit:
+            return .uikit(uikitValue)
+        case .coreAnimation:
+            return .coreAnimation(caValue)
+        }
+    }
+
+    var projectedValue: MultiSpringParameterEdit {
+        self
+    }
+
+    @State var type: SpringType = .spring
+
+    @State fileprivate var springValue = Spring()
+    @State fileprivate var interpolatingSpringValue = InterpolatingSpring()
+    @State fileprivate var uikitValue = UIKitSpring()
+    @State fileprivate var caValue = CASpring()
+}
+
+struct MultiSpringParameterController: View {
+    var editingParameter: MultiSpringParameterEdit
+
+    var body: some View {
+        VStack {
+            Picker("Type", selection: editingParameter.$type) {
+                ForEach(SpringType.allCases, id: \.self) { type in
+                    Text(type.name)
+                }
+            }
+            .pickerStyle(WheelPickerStyle())
+
+            switch editingParameter.type {
             case .spring:
-                return "Spring"
+                OneSpringParameterController(parameter: editingParameter.$springValue,
+                                             parameterSettings: [
+                                                (\.response, "Response", 0.0 ... 20.00, 0.05),
+                                                (\.dampingFraction, "Damping Fraction", 0.0 ... 5.0, 0.025),
+                                                (\.blendDuration, "Blend Duration", 0.0 ... 2.0, 0.1)
+                                             ])
             case .interpolatingSpring:
-                return "Interpolating Spring"
+                OneSpringParameterController(parameter: editingParameter.$interpolatingSpringValue,
+                                             parameterSettings: [
+                                                (\.mass, "Mass", 0.1 ... 10.0, 0.1),
+                                                (\.stiffness, "Stiffness", 0.1 ... 10.0, 0.1),
+                                                (\.damping, "Damping", 0.0 ... 5.0, 0.1),
+                                                (\.initialVelocity, "Initial Velocity", -10.0 ... 10.0, 0.1)
+                                             ])
             case .uikit:
-                return "UIKit"
+                OneSpringParameterController(parameter: editingParameter.$uikitValue,
+                                             parameterSettings: [
+                                                (\.duration, "Duration", 0.0 ... 10.0, 0.1),
+                                                (\.dampingRatio, "Damping Ratio", 0.0 ... 5.0, 0.025),
+                                                (\.initialVelocity, "Initial Velocity", -10.0 ... 10.0, 0.1)
+                                             ])
             case .coreAnimation:
-                return "Core Animation"
+                OneSpringParameterController(parameter: editingParameter.$caValue,
+                                             parameterSettings: [
+                                                (\.mass, "Mass", 0.1 ... 10.0, 0.1),
+                                                (\.stiffness, "Stiffness", 0.1 ... 10.0, 0.1),
+                                                (\.damping, "Damping", 0.0 ... 5.0, 0.1),
+                                                (\.initialVelocity, "Initial Velocity", -10.0 ... 10.0, 0.1),
+                                             ])
             }
         }
     }
-
-    struct Spring {
-        var response: Double = 0.55
-        var dampingFraction: Double = 0.825
-        var blendDuration: Double = 0
-    }
-
-    struct InterpolatingSpring {
-        var mass: Double = 1.0
-        var stiffness: Double = 1.0
-        var damping: Double = 1.0
-        var initialVelocity: Double = 0.0
-    }
-
-    struct UIKitSpring {
-        var duration: Double = 0.5
-        var dampingRatio: Double = 1.0
-        var initialVelocity: Double = 0.0
-    }
-
-    struct CASpring {
-        var mass: Double = 1.0
-        var stiffness: Double = 1.0
-        var damping: Double = 1.0
-        var initialVelocity: Double = 0.0
-    }
-
-    struct TypeMissmatchError: Error {
-        var message: String
-    }
-
-    var type = SpringType.spring
-
-    var springValue = Spring()
-    var interpolatingSpringValue = InterpolatingSpring()
-    var uikitValue = UIKitSpring()
-    var caValue = CASpring()
-
-    func animation() throws -> Animation   {
-        switch type {
-        case .spring:
-            return .spring(
-                response: springValue.response,
-                dampingFraction: springValue.dampingFraction,
-                blendDuration: springValue.blendDuration
-            )
-        case .interpolatingSpring:
-            return .interpolatingSpring(
-                mass: interpolatingSpringValue.mass,
-                stiffness: interpolatingSpringValue.stiffness,
-                damping: interpolatingSpringValue.damping,
-                initialVelocity: interpolatingSpringValue.initialVelocity
-            )
-        case .uikit:
-            throw TypeMissmatchError(message: "No animation for uikit type")
-        case .coreAnimation:
-            throw TypeMissmatchError(message: "No animation for coreAnimation type")
-        }
-    }
 }
 
-struct TextWidthKey: PreferenceKey {
-    static var defaultValue: CGFloat? {
-        nil
-    }
+struct OneSpringParameterController<Parameter>: View {
+    @Binding var parameter: Parameter
 
-    static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
-
-    }
-}
-
-struct SpringParameterController: View {
-    @Binding var parameter: SpringParameter
+    var parameterSettings: [(WritableKeyPath<Parameter, Double>, title: String, numberRange: ClosedRange<Double>, unit: Double)]
 
     @State var textWidth: CGFloat = 100
 
@@ -112,43 +168,12 @@ struct SpringParameterController: View {
         ]
     }
 
-    var parameterSettings: [(String, ClosedRange<Double>, unit: Double, Binding<Double>)] {
-        switch parameter.type {
-        case .spring:
-            return [
-                ("Response", 0.0 ... 20.00, 0.05, $parameter.springValue.response),
-                ("Damping Fraction", 0.0 ... 5.0, 0.025, $parameter.springValue.dampingFraction),
-                ("Blend Duration", 0.0 ... 2.0, 0.1, $parameter.springValue.blendDuration)
-            ]
-        case .interpolatingSpring:
-            return [
-                ("Mass", 0.1 ... 10.0, 0.1, $parameter.interpolatingSpringValue.mass),
-                ("Stiffness", 0.1 ... 10.0, 0.1, $parameter.interpolatingSpringValue.stiffness),
-                ("Damping", 0.0 ... 5.0, 0.1, $parameter.interpolatingSpringValue.damping),
-                ("Initial Velocity", -10.0 ... 10.0, 0.1, $parameter.interpolatingSpringValue.initialVelocity)
-            ]
-        case .uikit:
-            return [
-                ("Duration", 0.0 ... 10.0, 0.1, $parameter.uikitValue.duration),
-                ("Damping Ratio", 0.0 ... 5.0, 0.025, $parameter.uikitValue.dampingRatio),
-                ("Initial Velocity", -10.0 ... 10.0, 0.1, $parameter.uikitValue.initialVelocity)
-            ]
-        case .coreAnimation:
-            return [
-                ("Mass", 0.1 ... 10.0, 0.1, $parameter.caValue.mass),
-                ("Stiffness", 0.1 ... 10.0, 0.1, $parameter.caValue.stiffness),
-                ("Damping", 0.0 ... 5.0, 0.1, $parameter.caValue.damping),
-                ("Initial Velocity", -10.0 ... 10.0, 0.1, $parameter.caValue.initialVelocity)
-            ]
-        }
-    }
-
     // This view is used to get the maximum text width, the value is set to `textWidth`
     @ViewBuilder
     var textWidthView: some View {
         VStack {
             ForEach(parameterSettings, id: \.0) { (item) in
-                Text(item.0)
+                Text(item.title)
             }
         }
         .background(GeometryReader { proxy in
@@ -164,36 +189,42 @@ struct SpringParameterController: View {
     }
 
     var body: some View {
-        VStack {
-            Picker("Type", selection: $parameter.type) {
-                ForEach(SpringParameter.SpringType.allCases, id: \.self) { type in
-                    Text(type.name)
-                }
-            }
-            .pickerStyle(WheelPickerStyle())
+        LazyVGrid(columns: columns) {
+            ForEach(parameterSettings, id: \.0) { setting in
+                let (keyPath, title, range, unit) = setting
+                Text(title)
+                Text(String(format: "%.3f", parameter[keyPath: keyPath]))
+                Slider(value: _parameter[dynamicMember: keyPath], in: range)
+                    .onChange(of: parameter[keyPath: keyPath]) { value in
+                        let old = parameter[keyPath: keyPath]
+                        let new = (value / unit).rounded() * unit
 
-            LazyVGrid(columns: columns) {
-                ForEach(parameterSettings, id: \.0) { setting in
-                    let (title, range, unit, property) = setting
-                    Text(title)
-                    Text(String(format: "%.3f", property.wrappedValue))
-                    Slider(value: property, in: range)
-                        .onChange(of: property.wrappedValue) { value in
-                            property.wrappedValue = (value / unit).rounded() * unit
+                        if abs(new - old) > 0.001 {
+                            parameter[keyPath: keyPath] = new
                         }
-                }
+                    }
             }
         }
         .background(textWidthView)
     }
 }
 
+struct TextWidthKey: PreferenceKey {
+    static var defaultValue: CGFloat? {
+        nil
+    }
+
+    static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
+
+    }
+}
+
 struct SpringParameterController_Previews: PreviewProvider {
     struct Wrapper: View {
-        @State var parameter = SpringParameter()
+        @MultiSpringParameterEdit var parameter: MultiSpringParameter
 
         var body: some View {
-            SpringParameterController(parameter: $parameter)
+            MultiSpringParameterController(editingParameter: $parameter)
         }
     }
 

@@ -118,7 +118,7 @@ enum MixStrategy {
 class UIAnimationController<RecordingValue> {
     var recorder: PropertyRecorder<RecordingValue>?
 
-    typealias Animator = EitherThree<SpringParameter.UIKitSpring, SpringParameter.CASpring, SpringCurve>
+    typealias Animator = EitherThree<UIKitSpring, CASpring, SpringCurve>
 
     var previous: (function: MotionFunction, startTime: CFTimeInterval)?
 
