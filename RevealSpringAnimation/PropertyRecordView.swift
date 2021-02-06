@@ -109,16 +109,24 @@ class PropertyRecorder<RecordingValue> {
     }
 }
 
-enum MixStrategy {
-    case noMix
-    case compose
-    case keepVelocity
-}
-
 class UIAnimationController<RecordingValue> {
     var recorder: PropertyRecorder<RecordingValue>?
 
-    typealias Animator = EitherThree<UIKitSpring, CASpring, SpringCurve>
+    enum Animator {
+        // mimic: If true, use key frame animation to mimic the system animation; if false, directly use system API.
+        case uikit(UIKitSpring, mimic: Bool)
+        case coreAnimation(CASpring, mimic: Bool)
+
+        // Always mimic here, calling SwiftUI system animation is in RecordControllerVM
+        case spring(Spring)
+        case interpolatingSpring(InterpolatingSpring)
+    }
+
+    enum MixStrategy {
+        case noMix
+        case compose
+        case keepVelocity
+    }
 
     var previous: (function: MotionFunction, startTime: CFTimeInterval)?
 
@@ -137,109 +145,68 @@ class UIAnimationController<RecordingValue> {
         self.offset = offset
     }
 
-    func setOffset(_ newOffset: Bool, animator: Animator?, mixStrategy: MixStrategy = .noMix) {
+    func setOffset(_ newOffset: Bool, animator: Animator?) {
         offset = newOffset
 
         guard let view = view else { return }
 
         if let animator = animator {
             switch animator {
-            case .left(let uiValue):
-                UIView.animate(withDuration: uiValue.duration,
-                               delay: 0,
-                               usingSpringWithDamping: CGFloat(uiValue.dampingRatio),
-                               initialSpringVelocity: CGFloat(uiValue.initialVelocity),
-                               options: []) { [self] () in
-                    view.square.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
-                }
-
-                let caAnimation = view.square.layer.animation(forKey: "position") as! CASpringAnimation
-
-                let response = 2 * CGFloat.pi / sqrt(caAnimation.stiffness / caAnimation.mass)
-                let dampingRatio = caAnimation.damping / 2 / sqrt(caAnimation.stiffness * caAnimation.mass)
-
-                print("Response \(response), damping ratio: \(dampingRatio)")
-
-                // Currently doesn't support mix
-                previous = nil
-            case .mid(let caValue):
-                let animation = CASpringAnimation()
-
-                animation.mass = CGFloat(caValue.mass)
-                animation.stiffness = CGFloat(caValue.stiffness)
-                animation.damping = CGFloat(caValue.damping)
-                animation.initialVelocity = CGFloat(caValue.initialVelocity)
-
-                animation.keyPath = #keyPath(CALayer.position)
-                animation.duration = animation.settlingDuration
-
-                let layer = view.square.layer
-                animation.fromValue = (layer.presentation() ?? layer).position
-
-                let newPosition = CGPoint(x: 50, y: offset ? 150 : 50)
-                animation.toValue = newPosition
-
-                view.square.layer.add(animation, forKey: "spring")
-
-                view.square.layer.position = newPosition
-
-                print("Settling duration: \(animation.settlingDuration)")
-
-                // Currently doesn't support mix
-                previous = nil
-            case .right(let curveValue):
-                let animation = CAKeyframeAnimation()
-
-                let layer = view.square.layer
-                let fromY = (layer.presentation() ?? layer).position.y
-                let toY: CGFloat = offset ? 150 : 50
-
-                let function: MotionFunction
-                if let previous = previous {
-                    let startOffset = CACurrentMediaTime() - previous.startTime
-                    if let animation = view.square.layer.animation(forKey: "keyFrameSpring") as? CAKeyframeAnimation,
-                       startOffset <= animation.duration {
-                        switch mixStrategy {
-                        case .noMix:
-                            function = SimpleCurve(curve: curveValue, from: fromY, to: toY)
-                        case .compose:
-                            function = ComposedCurve(previous: previous.function, startOffset: startOffset,
-                                                     curve: curveValue, to: toY)
-                        case .keepVelocity:
-                            function = KeepVelocityCurve(previous: previous.function, startOffset: startOffset,
-                                                         curve: curveValue, to: toY)
-                        }
-                    } else {
-                        function = SimpleCurve(curve: curveValue, from: fromY, to: toY)
-                    }
+            case .uikit(let uiValue, let shouldMimic):
+                if shouldMimic {
+                    previous = mimic(curve: SpringCurve(uiValue), isSwiftUI: false, mixStrategy: .noMix)
                 } else {
-                    function = SimpleCurve(curve: curveValue, from: fromY, to: toY)
-                }
-
-                let settlingDuration = function.settlingDuration
-
-                let keyTimes: [Double] = Array(stride(from: 0.0, to: settlingDuration, by: 1 / Double(UIScreen.main.maximumFramesPerSecond)))
-                animation.keyTimes = keyTimes
-                    .map { time -> Double in
-                        let normalTime = time / settlingDuration
-                        return normalTime
-                    } as [NSNumber]
-
-                animation.values = keyTimes
-                    .map { t in
-                        CGPoint(x: 50, y: function.value(at: t))
+                    UIView.animate(withDuration: uiValue.duration,
+                                   delay: 0,
+                                   usingSpringWithDamping: CGFloat(uiValue.dampingRatio),
+                                   initialSpringVelocity: CGFloat(uiValue.initialVelocity),
+                                   options: []) { [self] () in
+                        view.square.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
                     }
 
-                animation.keyPath = #keyPath(CALayer.position)
-                animation.duration = settlingDuration
+                    let caAnimation = view.square.layer.animation(forKey: "position") as! CASpringAnimation
 
-                view.square.layer.add(animation, forKey: "keyFrameSpring")
+                    let response = 2 * CGFloat.pi / sqrt(caAnimation.stiffness / caAnimation.mass)
+                    let dampingRatio = caAnimation.damping / 2 / sqrt(caAnimation.stiffness * caAnimation.mass)
 
-                view.square.layer.position = CGPoint(x: 50, y: toY)
+                    print("Response \(response), damping ratio: \(dampingRatio)")
 
-                print("Custom settling duration: \(settlingDuration)")
+                    // No mix with system animation
+                    previous = nil
+                }
+            case .coreAnimation(let caValue, let shouldMimic):
+                if shouldMimic {
+                    previous = mimic(curve: SpringCurve(caValue), isSwiftUI: false, mixStrategy: .noMix)
+                } else {
+                    let animation = CASpringAnimation()
 
-                previous = (function, CACurrentMediaTime())
+                    animation.mass = CGFloat(caValue.mass)
+                    animation.stiffness = CGFloat(caValue.stiffness)
+                    animation.damping = CGFloat(caValue.damping)
+                    animation.initialVelocity = CGFloat(caValue.initialVelocity)
+
+                    animation.keyPath = #keyPath(CALayer.position)
+                    animation.duration = animation.settlingDuration
+
+                    let layer = view.square.layer
+                    animation.fromValue = (layer.presentation() ?? layer).position
+
+                    let newPosition = CGPoint(x: 50, y: offset ? 150 : 50)
+                    animation.toValue = newPosition
+
+                    view.square.layer.add(animation, forKey: "spring")
+
+                    view.square.layer.position = newPosition
+
+                    print("Settling duration: \(animation.settlingDuration)")
+
+                    // No mix with system animation
+                    previous = nil
+                }
+            case .spring(let springValue):
+                previous = mimic(curve: SpringCurve(springValue), isSwiftUI: true, mixStrategy: .keepVelocity)
+            case .interpolatingSpring(let interpolatingSpringValue):
+                previous = mimic(curve: SpringCurve(interpolatingSpringValue), isSwiftUI: true, mixStrategy: .compose)
             }
         } else {
             view.square.layer.removeAllAnimations()
@@ -248,6 +215,67 @@ class UIAnimationController<RecordingValue> {
 
             previous = nil
         }
+    }
+
+    func mimic(curve: SpringCurve, isSwiftUI: Bool, mixStrategy: MixStrategy) -> (function: MotionFunction, startTime: CFTimeInterval)? {
+        guard let view = view else { return nil }
+
+        let animation = CAKeyframeAnimation()
+
+        let layer = view.square.layer
+        let fromY = (layer.presentation() ?? layer).position.y
+        let toY: CGFloat = offset ? 150 : 50
+
+        let globalFromY = (layer.presentation() ?? layer).convert(CGPoint.zero, to: nil).y
+
+        let function: MotionFunction
+        if let previous = previous {
+            let startOffset = CACurrentMediaTime() - previous.startTime
+            print("Start offset \(startOffset)")
+            print("fromY \(globalFromY)")
+            if let animation = view.square.layer.animation(forKey: "keyFrameSpring") as? CAKeyframeAnimation,
+               startOffset <= animation.duration {
+                switch mixStrategy {
+                case .noMix:
+                    function = SimpleCurve(curve: curve, from: fromY, to: toY)
+                case .compose:
+                    function = ComposedCurve(previous: previous.function, startOffset: startOffset,
+                                             curve: curve, to: toY)
+                case .keepVelocity:
+                    function = KeepVelocityCurve(previous: previous.function, startOffset: startOffset,
+                                                 curve: curve, to: toY)
+                }
+            } else {
+                function = SimpleCurve(curve: curve, from: fromY, to: toY)
+            }
+        } else {
+            function = SimpleCurve(curve: curve, from: fromY, to: toY)
+        }
+
+        let settlingDuration = function.settlingDuration
+
+        let keyTimes: [Double] = Array(stride(from: 0.0, to: settlingDuration, by: 1 / Double(UIScreen.main.maximumFramesPerSecond)))
+        animation.keyTimes = keyTimes
+            .map { time -> Double in
+                let normalTime = time / settlingDuration
+                return normalTime
+            } as [NSNumber]
+
+        animation.values = keyTimes
+            .map { t in
+                CGPoint(x: 50, y: function.value(at: t))
+            }
+
+        animation.keyPath = #keyPath(CALayer.position)
+        animation.duration = settlingDuration
+
+        view.square.layer.add(animation, forKey: "keyFrameSpring")
+
+        view.square.layer.position = CGPoint(x: 50, y: toY)
+
+        print("Custom settling duration: \(settlingDuration)")
+
+        return (function, CACurrentMediaTime())
     }
 }
 

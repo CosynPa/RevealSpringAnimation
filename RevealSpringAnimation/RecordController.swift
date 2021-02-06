@@ -146,8 +146,7 @@ struct RecordControllerVM {
             recorders.uikitController.setOffset(offset, animator: nil)
 
             recorders.customController.setOffset(offset,
-                                                 animator: .right(SpringCurve(springValue)),
-                                                 mixStrategy: .keepVelocity)
+                                                 animator: .spring(springValue))
         case .interpolatingSpring(let interpolatingSpringValue):
             withAnimation(interpolatingSpringValue.animation) {
                 offset.toggle()
@@ -157,17 +156,15 @@ struct RecordControllerVM {
             recorders.uikitController.setOffset(offset, animator: nil)
 
             recorders.customController.setOffset(offset,
-                                                 animator: .right(SpringCurve(interpolatingSpringValue)),
-                                                 mixStrategy: .compose)
-
+                                                 animator: .interpolatingSpring(interpolatingSpringValue))
         case .uikit(let uikitValue):
             offset.toggle()
-            recorders.uikitController.setOffset(offset, animator: .left(uikitValue))
-            recorders.customController.setOffset(offset, animator: .right(SpringCurve(uikitValue)))
+            recorders.uikitController.setOffset(offset, animator: .uikit(uikitValue, mimic: false))
+            recorders.customController.setOffset(offset, animator: .uikit(uikitValue, mimic: true))
         case .coreAnimation(let caValue):
             offset.toggle()
-            recorders.uikitController.setOffset(offset, animator: .mid(caValue))
-            recorders.customController.setOffset(offset, animator: .right(SpringCurve(caValue)))
+            recorders.uikitController.setOffset(offset, animator: .coreAnimation(caValue, mimic: false))
+            recorders.customController.setOffset(offset, animator: .coreAnimation(caValue, mimic: true))
         }
 
         return Just(()).delay(for: .seconds(recordDuration), scheduler: DispatchQueue.main)

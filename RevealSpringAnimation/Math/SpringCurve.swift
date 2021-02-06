@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Mathematical representation of a spring curve
 struct SpringCurve {
     private var _response: Double
 

@@ -28,6 +28,7 @@ enum SpringType: Hashable, CaseIterable, Equatable {
     }
 }
 
+// SwiftUI spring API parameters
 struct Spring {
     var response: Double = 0.55
     var dampingFraction: Double = 0.825
@@ -42,6 +43,7 @@ struct Spring {
     }
 }
 
+// SwiftUI interpolatingSpring API parameters
 struct InterpolatingSpring {
     var mass: Double = 1.0
     var stiffness: Double = 1.0
@@ -58,12 +60,14 @@ struct InterpolatingSpring {
     }
 }
 
+// UIView spring animate API parameters
 struct UIKitSpring {
     var duration: Double = 0.5
     var dampingRatio: Double = 1.0
     var initialVelocity: Double = 0.0
 }
 
+// CASpringAnimation API parameters
 struct CASpring {
     var mass: Double = 1.0
     var stiffness: Double = 1.0
@@ -71,6 +75,7 @@ struct CASpring {
     var initialVelocity: Double = 0.0
 }
 
+// The parameters of the whole controller, can be one of the four types
 enum MultiSpringParameter {
     case spring(Spring)
     case interpolatingSpring(InterpolatingSpring)
