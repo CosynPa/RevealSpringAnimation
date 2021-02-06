@@ -22,31 +22,31 @@ class RecordCollector {
             systemUpdate.send()
         }
     }
-    var customAnimationRecord: [(TimeInterval, CGFloat)]? {
-        didSet { customUpdate.send() }
+    var mimicAnimationRecord: [(TimeInterval, CGFloat)]? {
+        didSet { mimicUpdate.send() }
     }
 
     private var systemUpdate = PassthroughSubject<Void, Never>()
-    private var customUpdate = PassthroughSubject<Void, Never>()
+    private var mimicUpdate = PassthroughSubject<Void, Never>()
 
     var maxDifference: CGFloat {
         guard let system = systemAnimationRecord, system.count > 0 else { return 0 }
-        guard let custom = customAnimationRecord, custom.count > 0 else { return 0 }
+        guard let mimic = mimicAnimationRecord, mimic.count > 0 else { return 0 }
 
-        guard custom.count >= 2 else {
-            return abs(custom[0].1 - system[0].1)
+        guard mimic.count >= 2 else {
+            return abs(mimic[0].1 - system[0].1)
         }
 
         // Around 1 / 60 for 60 Hz screens
-        let frameDuration = (custom.last!.0 - custom[0].0) / Double(custom.count - 1)
+        let frameDuration = (mimic.last!.0 - mimic[0].0) / Double(mimic.count - 1)
 
         let differences: [CGFloat] = system.compactMap { (systemTime, systemValue) -> CGFloat? in
-            let matchedItem: (TimeInterval, CGFloat)? = custom.first { (customTime, _) -> Bool in
-                abs(customTime - systemTime) < frameDuration / 2
+            let matchedItem: (TimeInterval, CGFloat)? = mimic.first { (mimicTime, _) -> Bool in
+                abs(mimicTime - systemTime) < frameDuration / 2
             }
 
-            return matchedItem.map { (_, customValue) -> CGFloat in
-                abs(customValue - systemValue)
+            return matchedItem.map { (_, mimicValue) -> CGFloat in
+                abs(mimicValue - systemValue)
             }
         }
 
@@ -54,7 +54,7 @@ class RecordCollector {
     }
 
     var maxDifferencePublisher: AnyPublisher<CGFloat, Never> {
-        systemUpdate.zip(customUpdate)
+        systemUpdate.zip(mimicUpdate)
             .map { [weak self] _ -> CGFloat in
                 self?.maxDifference ?? 0
             }

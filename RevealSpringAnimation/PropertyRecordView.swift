@@ -273,7 +273,7 @@ class UIAnimationController<RecordingValue> {
 
         view.square.layer.position = CGPoint(x: 50, y: toY)
 
-        print("Custom settling duration: \(settlingDuration)")
+        print("Mimic settling duration: \(settlingDuration)")
 
         return (function, CACurrentMediaTime())
     }
@@ -281,7 +281,7 @@ class UIAnimationController<RecordingValue> {
 
 enum AnimationViewType {
     case systemAnimation
-    case customAnimation
+    case mimicAnimation
 }
 
 struct UIAnimationView<RecordingValue>: UIViewRepresentable {
@@ -300,9 +300,9 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
         case .systemAnimation:
             uiView.square.backgroundColor = #colorLiteral(red: 0.995510757, green: 0.4321444035, blue: 0, alpha: 1)
             uiView.label.text = "UIKit"
-        case .customAnimation:
+        case .mimicAnimation:
             uiView.square.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-            uiView.label.text = "Custom"
+            uiView.label.text = "Mimic"
         }
     }
 }

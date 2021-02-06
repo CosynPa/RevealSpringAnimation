@@ -39,9 +39,9 @@ struct RecordCompareView: View {
 
     @ViewBuilder
     var compareView: some View {
-        UIAnimationView(controller: recorders.customController, type: .customAnimation)
+        UIAnimationView(controller: recorders.mimicController, type: .mimicAnimation)
             .onAppear {
-                recorders.customController.setOffset(offset, animator: nil)
+                recorders.mimicController.setOffset(offset, animator: nil)
             }
             .frame(width: 100)
     }

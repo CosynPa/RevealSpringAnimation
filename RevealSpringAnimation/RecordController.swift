@@ -19,8 +19,8 @@ class Recorders: ObservableObject {
     let uikitController: UIAnimationController<CGFloat>
 
     // Used for custom key frame animation
-    let customRecorder: PropertyRecorder<CGFloat>
-    let customController: UIAnimationController<CGFloat>
+    let mimicRecorder: PropertyRecorder<CGFloat>
+    let mimicController: UIAnimationController<CGFloat>
 
     private var bag = Set<AnyCancellable>()
 
@@ -39,7 +39,7 @@ class Recorders: ObservableObject {
 
         uikitController = UIAnimationController(recorder: recorder, offset: false)
 
-        customRecorder = PropertyRecorder<CGFloat> { (view) -> CGFloat in
+        mimicRecorder = PropertyRecorder<CGFloat> { (view) -> CGFloat in
             guard let layer = view.layer.presentation() else {
                 // Can happen when the view is off screen
                 return 0
@@ -47,11 +47,11 @@ class Recorders: ObservableObject {
             return layer.convert(CGPoint.zero, to: nil).y
         }
 
-        customRecorder.record.sink { (record) in
-            RecordCollector.shared.customAnimationRecord = record
+        mimicRecorder.record.sink { (record) in
+            RecordCollector.shared.mimicAnimationRecord = record
         }.store(in: &bag)
 
-        customController = UIAnimationController(recorder: customRecorder, offset: false)
+        mimicController = UIAnimationController(recorder: mimicRecorder, offset: false)
     }
 }
 
@@ -134,7 +134,7 @@ struct RecordControllerVM {
 
     private func handleStart() -> AnyCancellable {
         recorders.recorder.startRecord()
-        recorders.customRecorder.startRecord()
+        recorders.mimicRecorder.startRecord()
 
         switch parameter {
         case .spring(let springValue):
@@ -145,7 +145,7 @@ struct RecordControllerVM {
             // synchronize
             recorders.uikitController.setOffset(offset, animator: nil)
 
-            recorders.customController.setOffset(offset,
+            recorders.mimicController.setOffset(offset,
                                                  animator: .spring(springValue))
         case .interpolatingSpring(let interpolatingSpringValue):
             withAnimation(interpolatingSpringValue.animation) {
@@ -155,16 +155,16 @@ struct RecordControllerVM {
             // synchronize
             recorders.uikitController.setOffset(offset, animator: nil)
 
-            recorders.customController.setOffset(offset,
+            recorders.mimicController.setOffset(offset,
                                                  animator: .interpolatingSpring(interpolatingSpringValue))
         case .uikit(let uikitValue):
             offset.toggle()
             recorders.uikitController.setOffset(offset, animator: .uikit(uikitValue, mimic: false))
-            recorders.customController.setOffset(offset, animator: .uikit(uikitValue, mimic: true))
+            recorders.mimicController.setOffset(offset, animator: .uikit(uikitValue, mimic: true))
         case .coreAnimation(let caValue):
             offset.toggle()
             recorders.uikitController.setOffset(offset, animator: .coreAnimation(caValue, mimic: false))
-            recorders.customController.setOffset(offset, animator: .coreAnimation(caValue, mimic: true))
+            recorders.mimicController.setOffset(offset, animator: .coreAnimation(caValue, mimic: true))
         }
 
         return Just(()).delay(for: .seconds(recordDuration), scheduler: DispatchQueue.main)
@@ -175,7 +175,7 @@ struct RecordControllerVM {
 
     private func handleStop() {
         recorders.recorder.endRecord()
-        recorders.customRecorder.endRecord()
+        recorders.mimicRecorder.endRecord()
     }
 
     private func handleReset() {
@@ -194,7 +194,7 @@ struct RecordControllerVM {
         }
 
         recorders.uikitController.setOffset(newOffset, animator: nil)
-        recorders.customController.setOffset(newOffset, animator: nil)
+        recorders.mimicController.setOffset(newOffset, animator: nil)
     }
 
 }
