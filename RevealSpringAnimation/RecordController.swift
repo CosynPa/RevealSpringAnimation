@@ -64,7 +64,7 @@ struct RecordControllerVM {
 
     var recorders: Recorders
 
-    func onStart() {
+    private func transitToStart(newOffset: Bool) {
         let newState: RecordingState
 
         switch state {
@@ -73,11 +73,15 @@ struct RecordControllerVM {
             handleStop()
             fallthrough
         case .notRecording:
-            let newCancellable = handleStart()
+            let newCancellable = handleStart(newOffset: newOffset)
             newState = .recording(newCancellable)
         }
 
         state = newState
+    }
+
+    func onStart() {
+        transitToStart(newOffset: !offset)
     }
 
     func onReset() {
@@ -94,6 +98,14 @@ struct RecordControllerVM {
         }
 
         state = newState
+    }
+
+    func onKeyboardShowAnimationStart() {
+        transitToStart(newOffset: true)
+    }
+
+    func onKeyboardHideAnimationStart() {
+        transitToStart(newOffset: false)
     }
 
     // When the user switch to a different parameter type
@@ -132,14 +144,14 @@ struct RecordControllerVM {
         state = newState
     }
 
-    private func handleStart() -> AnyCancellable {
+    private func handleStart(newOffset: Bool) -> AnyCancellable {
         recorders.recorder.startRecord()
         recorders.mimicRecorder.startRecord()
 
         switch parameter {
         case .spring(let springValue):
             withAnimation(springValue.animation) {
-                offset.toggle()
+                offset = newOffset
             }
 
             // synchronize
@@ -149,7 +161,7 @@ struct RecordControllerVM {
                                                  animator: .spring(springValue))
         case .interpolatingSpring(let interpolatingSpringValue):
             withAnimation(interpolatingSpringValue.animation) {
-                offset.toggle()
+                offset = newOffset
             }
 
             // synchronize
@@ -158,15 +170,15 @@ struct RecordControllerVM {
             recorders.mimicController.setOffset(offset,
                                                  animator: .interpolatingSpring(interpolatingSpringValue))
         case .uikit(let uikitValue):
-            offset.toggle()
+            offset = newOffset
             recorders.uikitController.setOffset(offset, animator: .uikit(uikitValue, mimic: false))
             recorders.mimicController.setOffset(offset, animator: .uikit(uikitValue, mimic: true))
         case .coreAnimation(let caValue):
-            offset.toggle()
+            offset = newOffset
             recorders.uikitController.setOffset(offset, animator: .coreAnimation(caValue, mimic: false))
             recorders.mimicController.setOffset(offset, animator: .coreAnimation(caValue, mimic: true))
         case .keyboard:
-            offset.toggle()
+            offset = newOffset
 
             // synchronize
             recorders.uikitController.setOffset(offset, animator: nil)
@@ -259,7 +271,13 @@ struct RecordController: View {
                     Divider()
 
                     if parameter.isKeyboard {
-                        CustomKeyboardTextField()
+                        RecordKeyboardTextField(recorder: recorders.recorder)
+                            .onReceive(NotificationCenter.default.publisher(for: UIView.keyboardWillShowNotification)) { notification in
+                                vm.onKeyboardShowAnimationStart()
+                            }
+                            .onReceive(NotificationCenter.default.publisher(for: UIView.keyboardWillHideNotification)) { _ in
+                                vm.onKeyboardHideAnimationStart()
+                            }
                     } else {
                         Button("Animate") {
                             vm.onStart()

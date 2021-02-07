@@ -9,21 +9,6 @@ import Foundation
 import UIKit
 import SwiftUI
 
-struct CustomKeyboardTextField: UIViewRepresentable {
-    func makeUIView(context: Context) -> UITextField {
-        let view = UITextField()
-        view.borderStyle = .roundedRect
-        view.placeholder = "Tap here to show the blank keyboard"
-        view.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        view.inputView = KeyboardView()
-        return view
-    }
-
-    func updateUIView(_ uiView: UITextField, context: Context) {
-
-    }
-}
-
 class KeyboardView: UIView {
     func commonInit() {
         translatesAutoresizingMaskIntoConstraints = false

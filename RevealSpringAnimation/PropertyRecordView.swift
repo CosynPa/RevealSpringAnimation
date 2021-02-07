@@ -15,12 +15,32 @@ struct PropertyRecordView<RecordingValue>: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
 
-        recorder.view = view
+        recorder.recordTargetView = view
 
         return view
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {
+
+    }
+}
+
+struct RecordKeyboardTextField: UIViewRepresentable {
+    var recorder: PropertyRecorder<CGFloat>
+
+    func makeUIView(context: Context) -> UITextField {
+        let view = UITextField()
+        view.borderStyle = .roundedRect
+        view.placeholder = "Tap here to show the blank keyboard"
+        view.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+        let keyboard = KeyboardView()
+        recorder.recordTargetView = keyboard
+        view.inputView = keyboard
+        return view
+    }
+
+    func updateUIView(_ uiView: UITextField, context: Context) {
 
     }
 }
@@ -43,8 +63,8 @@ class PropertyRecorder<RecordingValue> {
 
     private var recordSubject = PassthroughSubject<[(TimeInterval, RecordingValue)], Never>()
 
-    // Provided by PropertyRecordView, the user should not directly set this property
-    fileprivate var view: UIView?
+    // Provided by PropertyRecordView or UIAnimationView or RecordKeyboardTextField, the user should not directly set this property
+    fileprivate var recordTargetView: UIView?
 
     init(recording: @escaping (UIView) -> RecordingValue) {
         self.recording = recording
@@ -65,8 +85,8 @@ class PropertyRecorder<RecordingValue> {
         recordingValues = []
         recordingLink = AutoInvalidatingDisplayLink()
 
-        guard let view = view else {
-            NSLog("Warning the `view` property is not set")
+        guard let view = recordTargetView else {
+            NSLog("Warning the `recordTargetView` property is not set")
             return
         }
 
@@ -90,7 +110,7 @@ class PropertyRecorder<RecordingValue> {
     }
 
     private func recordCurrentValue() {
-        guard let view = view else {
+        guard let view = recordTargetView else {
             NSLog("Warning the `view` property is not set")
             return
         }
@@ -290,7 +310,7 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UIKitAnimationView {
         let view = UIKitAnimationView()
-        controller.recorder?.view = view.square
+        controller.recorder?.recordTargetView = view.square
         controller.view = view
         return view
     }
