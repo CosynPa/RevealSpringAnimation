@@ -16,6 +16,7 @@
 		7E3BADFF258F0C4E00F5D810 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BADFE258F0C4E00F5D810 /* Assets.xcassets */; };
 		7E3BAE02258F0C4E00F5D810 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BAE01258F0C4E00F5D810 /* Preview Assets.xcassets */; };
 		7E3BAE0B258F0D4F00F5D810 /* PropertyRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */; };
+		7E989AA725D02E5500F4B556 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E989AA625D02E5500F4B556 /* KeyboardView.swift */; };
 		7EC6EA0A25A60B7A00BD0F48 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC6EA0925A60B7A00BD0F48 /* Either.swift */; };
 		7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */; };
 		7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */; };
@@ -49,6 +50,7 @@
 		7E3BAE01258F0C4E00F5D810 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7E3BAE03258F0C4E00F5D810 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyRecordView.swift; sourceTree = "<group>"; };
+		7E989AA625D02E5500F4B556 /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 		7EC6EA0925A60B7A00BD0F48 /* Either.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
 		7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringParameterController.swift; sourceTree = "<group>"; };
 		7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoInvalidatingDisplayLink.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				7E3BADFC258F0C4300F5D810 /* RecordController.swift */,
 				7E1212CA25AB50260018189A /* RecordCompareView.swift */,
 				7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */,
+				7E989AA625D02E5500F4B556 /* KeyboardView.swift */,
 				7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */,
 				7E3BADFE258F0C4E00F5D810 /* Assets.xcassets */,
 				7E3BAE03258F0C4E00F5D810 /* Info.plist */,
@@ -248,6 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7E3BADFD258F0C4300F5D810 /* RecordController.swift in Sources */,
+				7E989AA725D02E5500F4B556 /* KeyboardView.swift in Sources */,
 				7ED510C025B43266006F16CC /* SettlingDuratinonSolver.swift in Sources */,
 				7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */,
 				7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */,

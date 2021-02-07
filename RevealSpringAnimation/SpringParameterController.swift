@@ -13,6 +13,7 @@ enum SpringType: Hashable, CaseIterable, Equatable {
     case interpolatingSpring
     case uikit
     case coreAnimation
+    case keyboard
 
     var name: LocalizedStringKey {
         switch self {
@@ -24,6 +25,8 @@ enum SpringType: Hashable, CaseIterable, Equatable {
             return "UIKit"
         case .coreAnimation:
             return "Core Animation"
+        case .keyboard:
+            return "Keyboard"
         }
     }
 }
@@ -81,6 +84,16 @@ enum MultiSpringParameter {
     case interpolatingSpring(InterpolatingSpring)
     case uikit(UIKitSpring)
     case coreAnimation(CASpring)
+    case keyboard
+
+    var isKeyboard: Bool {
+        switch self {
+        case .keyboard:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 @propertyWrapper
@@ -95,6 +108,8 @@ struct MultiSpringParameterEdit: DynamicProperty {
             return .uikit(uikitValue)
         case .coreAnimation:
             return .coreAnimation(caValue)
+        case .keyboard:
+            return .keyboard
         }
     }
 
@@ -153,6 +168,8 @@ struct MultiSpringParameterController: View {
                                                 (\.damping, "Damping", 0.0 ... 5.0, 0.1),
                                                 (\.initialVelocity, "Initial Velocity", -10.0 ... 10.0, 0.1),
                                              ])
+            case .keyboard:
+                EmptyView()
             }
         }
     }

@@ -165,6 +165,16 @@ struct RecordControllerVM {
             offset.toggle()
             recorders.uikitController.setOffset(offset, animator: .coreAnimation(caValue, mimic: false))
             recorders.mimicController.setOffset(offset, animator: .coreAnimation(caValue, mimic: true))
+        case .keyboard:
+            offset.toggle()
+
+            // synchronize
+            recorders.uikitController.setOffset(offset, animator: nil)
+
+            // TODO: animator
+            recorders.mimicController.setOffset(offset,
+                                                animator: .spring(Spring()))
+
         }
 
         return Just(()).delay(for: .seconds(recordDuration), scheduler: DispatchQueue.main)
@@ -221,7 +231,8 @@ struct RecordController: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             RecordCompareView(recorders: recorders, type: $parameter.$type, offset: $offset)
-                .padding()
+                .padding(.bottom, parameter.isKeyboard ? 0 : 16)
+                .ignoresSafeArea(parameter.isKeyboard ? .all : .keyboard, edges: .bottom)
 
             ZStack(alignment: .top) {
                 Color.clear
@@ -247,12 +258,16 @@ struct RecordController: View {
 
                     Divider()
 
-                    Button("Animate") {
-                        vm.onStart()
-                    }
+                    if parameter.isKeyboard {
+                        CustomKeyboardTextField()
+                    } else {
+                        Button("Animate") {
+                            vm.onStart()
+                        }
 
-                    Button("Reset") {
-                        vm.onReset()
+                        Button("Reset") {
+                            vm.onReset()
+                        }
                     }
                 }
             }

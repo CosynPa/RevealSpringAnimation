@@ -34,6 +34,8 @@ struct RecordCompareView: View {
                     recorders.uikitController.setOffset(offset, animator: nil)
                 }
                 .frame(width: 100)
+        case .keyboard:
+            EmptyView()
         }
     }
 
