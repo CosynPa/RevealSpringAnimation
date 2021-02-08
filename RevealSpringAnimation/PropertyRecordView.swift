@@ -155,7 +155,7 @@ class UIAnimationController<RecordingValue> {
         didSet {
             // A little hack, this way when calculating the subview position, we don't need the height of this view
             view?.transform = CGAffineTransform(scaleX: 1, y: -1)
-            view?.square.transform = CGAffineTransform(scaleX: 1, y: -1)
+            view?.shapeView.transform = CGAffineTransform(scaleX: 1, y: -1)
             setOffset(offset, animator: nil)
         }
     }
@@ -181,10 +181,10 @@ class UIAnimationController<RecordingValue> {
                                    usingSpringWithDamping: CGFloat(uiValue.dampingRatio),
                                    initialSpringVelocity: CGFloat(uiValue.initialVelocity),
                                    options: []) { [self] () in
-                        view.square.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
+                        view.shapeView.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
                     }
 
-                    let caAnimation = view.square.layer.animation(forKey: "position") as! CASpringAnimation
+                    let caAnimation = view.shapeView.layer.animation(forKey: "position") as! CASpringAnimation
 
                     let response = 2 * CGFloat.pi / sqrt(caAnimation.stiffness / caAnimation.mass)
                     let dampingRatio = caAnimation.damping / 2 / sqrt(caAnimation.stiffness * caAnimation.mass)
@@ -208,15 +208,15 @@ class UIAnimationController<RecordingValue> {
                     animation.keyPath = #keyPath(CALayer.position)
                     animation.duration = animation.settlingDuration
 
-                    let layer = view.square.layer
+                    let layer = view.shapeView.layer
                     animation.fromValue = (layer.presentation() ?? layer).position
 
                     let newPosition = CGPoint(x: 50, y: offset ? 150 : 50)
                     animation.toValue = newPosition
 
-                    view.square.layer.add(animation, forKey: "spring")
+                    view.shapeView.layer.add(animation, forKey: "spring")
 
-                    view.square.layer.position = newPosition
+                    view.shapeView.layer.position = newPosition
 
                     print("Settling duration: \(animation.settlingDuration)")
 
@@ -229,9 +229,9 @@ class UIAnimationController<RecordingValue> {
                 previous = mimic(curve: SpringCurve(interpolatingSpringValue), isSwiftUI: true, mixStrategy: .compose)
             }
         } else {
-            view.square.layer.removeAllAnimations()
+            view.shapeView.layer.removeAllAnimations()
 
-            view.square.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
+            view.shapeView.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
 
             previous = nil
         }
@@ -242,7 +242,7 @@ class UIAnimationController<RecordingValue> {
 
         let animation = CAKeyframeAnimation()
 
-        let layer = view.square.layer
+        let layer = view.shapeView.layer
         let fromY = (layer.presentation() ?? layer).position.y
         let toY: CGFloat = offset ? 150 : 50
 
@@ -253,7 +253,7 @@ class UIAnimationController<RecordingValue> {
             let startOffset = CACurrentMediaTime() - previous.startTime
             print("Start offset \(startOffset)")
             print("fromY \(globalFromY)")
-            if let animation = view.square.layer.animation(forKey: "keyFrameSpring") as? CAKeyframeAnimation,
+            if let animation = view.shapeView.layer.animation(forKey: "keyFrameSpring") as? CAKeyframeAnimation,
                startOffset <= animation.duration {
                 switch mixStrategy {
                 case .noMix:
@@ -289,9 +289,9 @@ class UIAnimationController<RecordingValue> {
         animation.keyPath = #keyPath(CALayer.position)
         animation.duration = settlingDuration
 
-        view.square.layer.add(animation, forKey: "keyFrameSpring")
+        view.shapeView.layer.add(animation, forKey: "keyFrameSpring")
 
-        view.square.layer.position = CGPoint(x: 50, y: toY)
+        view.shapeView.layer.position = CGPoint(x: 50, y: toY)
 
         print("Mimic settling duration: \(settlingDuration)")
 
@@ -302,6 +302,7 @@ class UIAnimationController<RecordingValue> {
 enum AnimationViewType {
     case systemAnimation
     case mimicAnimation
+    case mimicKeyboardAnimation
 }
 
 struct UIAnimationView<RecordingValue>: UIViewRepresentable {
@@ -310,7 +311,7 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
 
     func makeUIView(context: Context) -> UIKitAnimationView {
         let view = UIKitAnimationView()
-        controller.recorder?.recordTargetView = view.square
+        controller.recorder?.recordTargetView = view.shapeView
         controller.view = view
         return view
     }
@@ -318,17 +319,23 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
     func updateUIView(_ uiView: UIKitAnimationView, context: Context) {
         switch type {
         case .systemAnimation:
-            uiView.square.backgroundColor = #colorLiteral(red: 0.995510757, green: 0.4321444035, blue: 0, alpha: 1)
+            uiView.shapeView.color = #colorLiteral(red: 0.995510757, green: 0.4321444035, blue: 0, alpha: 1)
+            uiView.shapeView.type = .square
             uiView.label.text = "UIKit"
         case .mimicAnimation:
-            uiView.square.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+            uiView.shapeView.color = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+            uiView.shapeView.type = .square
+            uiView.label.text = "Mimic"
+        case .mimicKeyboardAnimation:
+            uiView.shapeView.color = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
+            uiView.shapeView.type = .arrow
             uiView.label.text = "Mimic"
         }
     }
 }
 
 class UIKitAnimationView: UIView {
-    var square: UIView!
+    var shapeView: ShapeView!
     var label: UILabel!
 
     override init(frame: CGRect) {
@@ -342,17 +349,17 @@ class UIKitAnimationView: UIView {
     }
 
     func commonInit() {
-        square = UIView()
+        shapeView = ShapeView()
 
-        addSubview(square)
+        addSubview(shapeView)
 
         label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        square.addSubview(label)
+        shapeView.addSubview(label)
 
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: square.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: square.centerYAnchor),
+            label.centerXAnchor.constraint(equalTo: shapeView.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: shapeView.centerYAnchor),
         ])
     }
 }

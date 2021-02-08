@@ -39,9 +39,18 @@ struct RecordCompareView: View {
         }
     }
 
+    private var mimicAnimationViewType: AnimationViewType {
+        switch type {
+        case .keyboard:
+            return .mimicKeyboardAnimation
+        default:
+            return .mimicAnimation
+        }
+    }
+
     @ViewBuilder
     var compareView: some View {
-        UIAnimationView(controller: recorders.mimicController, type: .mimicAnimation)
+        UIAnimationView(controller: recorders.mimicController, type: mimicAnimationViewType)
             .onAppear {
                 recorders.mimicController.setOffset(offset, animator: nil)
             }
