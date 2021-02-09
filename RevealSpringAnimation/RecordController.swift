@@ -272,12 +272,6 @@ struct RecordController: View {
 
                     if parameter.isKeyboard {
                         RecordKeyboardTextField(recorder: recorders.recorder)
-                            .onReceive(NotificationCenter.default.publisher(for: UIView.keyboardWillShowNotification)) { notification in
-                                vm.onKeyboardShowAnimationStart()
-                            }
-                            .onReceive(NotificationCenter.default.publisher(for: UIView.keyboardWillHideNotification)) { _ in
-                                vm.onKeyboardHideAnimationStart()
-                            }
                     } else {
                         Button("Animate") {
                             vm.onStart()
@@ -290,6 +284,12 @@ struct RecordController: View {
                 }
             }
             .padding()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIView.keyboardWillShowNotification)) { notification in
+            vm.onKeyboardShowAnimationStart()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIView.keyboardWillHideNotification)) { _ in
+            vm.onKeyboardHideAnimationStart()
         }
     }
 }
