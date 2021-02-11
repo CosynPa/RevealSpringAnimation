@@ -25,26 +25,6 @@ struct PropertyRecordView<RecordingValue>: UIViewRepresentable {
     }
 }
 
-struct RecordKeyboardTextField: UIViewRepresentable {
-    var recorder: PropertyRecorder<CGFloat>
-
-    func makeUIView(context: Context) -> UITextField {
-        let view = UITextField()
-        view.borderStyle = .roundedRect
-        view.placeholder = "Tap here to show the blank keyboard"
-        view.setContentHuggingPriority(.defaultHigh, for: .vertical)
-
-        let keyboard = KeyboardView()
-        recorder.recordTargetView = keyboard
-        view.inputView = keyboard
-        return view
-    }
-
-    func updateUIView(_ uiView: UITextField, context: Context) {
-
-    }
-}
-
 class PropertyRecorder<RecordingValue> {
     var shouldRecord = true {
         didSet {
@@ -63,7 +43,7 @@ class PropertyRecorder<RecordingValue> {
 
     private var recordSubject = PassthroughSubject<[(TimeInterval, RecordingValue)], Never>()
 
-    // Provided by PropertyRecordView or UIAnimationView or RecordKeyboardTextField, the user should not directly set this property
+    // Provided by PropertyRecordView or UIAnimationView, the user should not directly set this property
     fileprivate var recordTargetView: UIView?
 
     init(recording: @escaping (UIView) -> RecordingValue) {

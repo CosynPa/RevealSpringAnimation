@@ -275,7 +275,7 @@ struct RecordController: View {
                     Divider()
 
                     if parameter.isKeyboard {
-                        RecordKeyboardTextField(recorder: recorders.recorder)
+                        TextField("Tap here to show the keyboard", text: .constant(""))
                     } else {
                         Button("Animate") {
                             vm.onStart()
