@@ -16,7 +16,6 @@
 		7E3BADFF258F0C4E00F5D810 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BADFE258F0C4E00F5D810 /* Assets.xcassets */; };
 		7E3BAE02258F0C4E00F5D810 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BAE01258F0C4E00F5D810 /* Preview Assets.xcassets */; };
 		7E3BAE0B258F0D4F00F5D810 /* PropertyRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */; };
-		7E989AAB25D159DF00F4B556 /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E989AAA25D159DF00F4B556 /* ShapeView.swift */; };
 		7EC6EA0A25A60B7A00BD0F48 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC6EA0925A60B7A00BD0F48 /* Either.swift */; };
 		7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */; };
 		7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */; };
@@ -51,7 +50,6 @@
 		7E3BAE01258F0C4E00F5D810 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7E3BAE03258F0C4E00F5D810 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyRecordView.swift; sourceTree = "<group>"; };
-		7E989AAA25D159DF00F4B556 /* ShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeView.swift; sourceTree = "<group>"; };
 		7EC6EA0925A60B7A00BD0F48 /* Either.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
 		7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringParameterController.swift; sourceTree = "<group>"; };
 		7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoInvalidatingDisplayLink.swift; sourceTree = "<group>"; };
@@ -115,7 +113,6 @@
 				7E1212CA25AB50260018189A /* RecordCompareView.swift */,
 				7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */,
 				7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */,
-				7E989AAA25D159DF00F4B556 /* ShapeView.swift */,
 				7E3BADFE258F0C4E00F5D810 /* Assets.xcassets */,
 				7E3BAE03258F0C4E00F5D810 /* Info.plist */,
 				7E3BAE00258F0C4E00F5D810 /* Preview Content */,
@@ -258,7 +255,6 @@
 				7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */,
 				7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */,
 				7E1BD37425BDBD9700BD8604 /* MixedCurve.swift in Sources */,
-				7E989AAB25D159DF00F4B556 /* ShapeView.swift in Sources */,
 				7E1212CB25AB50260018189A /* RecordCompareView.swift in Sources */,
 				7E1212CE25AC09F60018189A /* SpringCurve.swift in Sources */,
 				7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */,

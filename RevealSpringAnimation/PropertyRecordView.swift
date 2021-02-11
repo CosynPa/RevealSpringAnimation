@@ -292,7 +292,6 @@ class UIAnimationController<RecordingValue> {
 enum AnimationViewType {
     case systemAnimation
     case mimicAnimation
-    case mimicKeyboardAnimation
 }
 
 struct UIAnimationView<RecordingValue>: UIViewRepresentable {
@@ -309,23 +308,17 @@ struct UIAnimationView<RecordingValue>: UIViewRepresentable {
     func updateUIView(_ uiView: UIKitAnimationView, context: Context) {
         switch type {
         case .systemAnimation:
-            uiView.shapeView.color = #colorLiteral(red: 0.995510757, green: 0.4321444035, blue: 0, alpha: 1)
-            uiView.shapeView.type = .square
+            uiView.shapeView.backgroundColor = #colorLiteral(red: 0.995510757, green: 0.4321444035, blue: 0, alpha: 1)
             uiView.label.text = "UIKit"
         case .mimicAnimation:
-            uiView.shapeView.color = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-            uiView.shapeView.type = .square
-            uiView.label.text = "Mimic"
-        case .mimicKeyboardAnimation:
-            uiView.shapeView.color = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-            uiView.shapeView.type = .arrow
+            uiView.shapeView.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
             uiView.label.text = "Mimic"
         }
     }
 }
 
 class UIKitAnimationView: UIView {
-    var shapeView: ShapeView!
+    var shapeView: UIView!
     var label: UILabel!
 
     override init(frame: CGRect) {
@@ -339,7 +332,7 @@ class UIKitAnimationView: UIView {
     }
 
     func commonInit() {
-        shapeView = ShapeView()
+        shapeView = UIView()
 
         addSubview(shapeView)
 
