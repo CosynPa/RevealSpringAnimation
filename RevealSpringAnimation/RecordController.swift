@@ -60,11 +60,11 @@ struct RecordControllerVM {
 
     @MultiSpringParameterEdit var parameter: MultiSpringParameter
     @Binding var recordDuration: Double
-    @Binding var offset: Bool
+    @Binding var offset: CGFloat
 
     var recorders: Recorders
 
-    private func transitToStart(newOffset: Bool) {
+    private func transitToStart(newOffset: CGFloat) {
         let newState: RecordingState
 
         switch state {
@@ -81,7 +81,7 @@ struct RecordControllerVM {
     }
 
     func onStart() {
-        transitToStart(newOffset: !offset)
+        transitToStart(newOffset: offset == 0 ? -100 : 0)
     }
 
     func onReset() {
@@ -100,12 +100,21 @@ struct RecordControllerVM {
         state = newState
     }
 
-    func onKeyboardShowAnimationStart() {
-        transitToStart(newOffset: true)
+    func onKeyboardShowAnimationStart(info: KeyboardInfo) {
+        let newOffset = -info.endFrame.height
+        if info.animate {
+            transitToStart(newOffset: newOffset)
+        } else {
+            stopAnimation(newOffset: newOffset)
+        }
     }
 
-    func onKeyboardHideAnimationStart() {
-        transitToStart(newOffset: false)
+    func onKeyboardHideAnimationStart(info: KeyboardInfo) {
+        if info.animate {
+            transitToStart(newOffset: 0)
+        } else {
+            stopAnimation(newOffset: 0)
+        }
     }
 
     // When the user switch to a different parameter type
@@ -144,7 +153,7 @@ struct RecordControllerVM {
         state = newState
     }
 
-    private func handleStart(newOffset: Bool) -> AnyCancellable {
+    private func handleStart(newOffset: CGFloat) -> AnyCancellable {
         recorders.recorder.startRecord()
         recorders.mimicRecorder.startRecord()
 
@@ -155,38 +164,33 @@ struct RecordControllerVM {
             }
 
             // synchronize
-            recorders.uikitController.setOffset(offset, animator: nil)
+            recorders.uikitController.set(offset: offset, animator: nil)
 
-            recorders.mimicController.setOffset(offset,
-                                                 animator: .spring(springValue))
+            recorders.mimicController.set(offset: offset,
+                                          animator: .spring(springValue))
         case .interpolatingSpring(let interpolatingSpringValue):
             withAnimation(interpolatingSpringValue.animation) {
                 offset = newOffset
             }
 
             // synchronize
-            recorders.uikitController.setOffset(offset, animator: nil)
+            recorders.uikitController.set(offset: offset, animator: nil)
 
-            recorders.mimicController.setOffset(offset,
-                                                 animator: .interpolatingSpring(interpolatingSpringValue))
+            recorders.mimicController.set(offset: offset,
+                                          animator: .interpolatingSpring(interpolatingSpringValue))
         case .uikit(let uikitValue):
             offset = newOffset
-            recorders.uikitController.setOffset(offset, animator: .uikit(uikitValue, mimic: false))
-            recorders.mimicController.setOffset(offset, animator: .uikit(uikitValue, mimic: true))
+            recorders.uikitController.set(offset: offset, animator: .uikit(uikitValue, mimic: false))
+            recorders.mimicController.set(offset: offset, animator: .uikit(uikitValue, mimic: true))
         case .coreAnimation(let caValue):
             offset = newOffset
-            recorders.uikitController.setOffset(offset, animator: .coreAnimation(caValue, mimic: false))
-            recorders.mimicController.setOffset(offset, animator: .coreAnimation(caValue, mimic: true))
+            recorders.uikitController.set(offset: offset, animator: .coreAnimation(caValue, mimic: false))
+            recorders.mimicController.set(offset: offset, animator: .coreAnimation(caValue, mimic: true))
         case .keyboard:
             offset = newOffset
-
-            // synchronize
-            recorders.uikitController.setOffset(offset, animator: nil)
-
-            // TODO: animator
-            recorders.mimicController.setOffset(offset,
-                                                animator: .spring(Spring()))
-
+            recorders.uikitController.set(offset: offset, animator: .keyboard(mimic: false))
+            recorders.mimicController.set(offset: offset,
+                                          animator: .keyboard(mimic: true))
         }
 
         return Just(()).delay(for: .seconds(recordDuration), scheduler: DispatchQueue.main)
@@ -201,22 +205,22 @@ struct RecordControllerVM {
     }
 
     private func handleReset() {
-        stopAnimation(newOffset: false)
+        stopAnimation(newOffset: 0)
     }
 
     private func handleSwitchType() {
         stopAnimation(newOffset: offset)
     }
 
-    private func stopAnimation(newOffset: Bool) {
+    private func stopAnimation(newOffset: CGFloat) {
         // A hack. Any existing animation will be overriden by setting the offset to a different value first and then setting back
-        offset = !newOffset
+        offset = newOffset + 10
         withAnimation(.linear(duration: 0)) {
             offset = newOffset
         }
 
-        recorders.uikitController.setOffset(newOffset, animator: nil)
-        recorders.mimicController.setOffset(newOffset, animator: nil)
+        recorders.uikitController.set(offset: newOffset, animator: nil)
+        recorders.mimicController.set(offset: newOffset, animator: nil)
     }
 
 }
@@ -228,7 +232,7 @@ struct RecordController: View {
 
     @MultiSpringParameterEdit var parameter: MultiSpringParameter
     @State var recordDuration = 2.0
-    @State var offset = false
+    @State var offset = CGFloat(0)
 
     @StateObject var recorders = Recorders()
 
@@ -286,10 +290,10 @@ struct RecordController: View {
             .padding()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIView.keyboardWillShowNotification)) { notification in
-            vm.onKeyboardShowAnimationStart()
+            vm.onKeyboardShowAnimationStart(info: KeyboardInfo(notification: notification))
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIView.keyboardWillHideNotification)) { _ in
-            vm.onKeyboardHideAnimationStart()
+        .onReceive(NotificationCenter.default.publisher(for: UIView.keyboardWillHideNotification)) { notification in
+            vm.onKeyboardHideAnimationStart(info: KeyboardInfo(notification: notification))
         }
     }
 }

@@ -81,6 +81,10 @@ struct SpringCurve {
                   initialVelocity: p.initialVelocity)
     }
 
+    static func makeKeyboardSpring() -> SpringCurve {
+        SpringCurve(response: 2 * Double.pi / 18, dampingRatio: 1, initialVelocity: 0)
+    }
+
     func curveFunc(_ t: Double) -> Double {
         let v0 = initialVelocity
         let zeta = dampingRatio

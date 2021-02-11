@@ -136,6 +136,7 @@ class UIAnimationController<RecordingValue> {
         // mimic: If true, use key frame animation to mimic the system animation; if false, directly use system API.
         case uikit(UIKitSpring, mimic: Bool)
         case coreAnimation(CASpring, mimic: Bool)
+        case keyboard(mimic: Bool)
 
         // Always mimic here, calling SwiftUI system animation is in RecordControllerVM
         case spring(Spring)
@@ -150,38 +151,34 @@ class UIAnimationController<RecordingValue> {
 
     var previous: (function: MotionFunction, startTime: CFTimeInterval)?
 
-    private var offset: Bool
     fileprivate var view: UIKitAnimationView? {
         didSet {
             // A little hack, this way when calculating the subview position, we don't need the height of this view
             view?.transform = CGAffineTransform(scaleX: 1, y: -1)
             view?.shapeView.transform = CGAffineTransform(scaleX: 1, y: -1)
-            setOffset(offset, animator: nil)
+            set(offset: 0, animator: nil)
         }
     }
 
     init(recorder: PropertyRecorder<RecordingValue>?, offset: Bool) {
         self.recorder = recorder
-        self.offset = offset
     }
 
-    func setOffset(_ newOffset: Bool, animator: Animator?) {
-        offset = newOffset
-
+    func set(offset: CGFloat, animator: Animator?) {
         guard let view = view else { return }
 
         if let animator = animator {
             switch animator {
             case .uikit(let uiValue, let shouldMimic):
                 if shouldMimic {
-                    previous = mimic(curve: SpringCurve(uiValue), isSwiftUI: false, mixStrategy: .noMix)
+                    previous = mimic(curve: SpringCurve(uiValue), offset: offset, mixStrategy: .noMix)
                 } else {
                     UIView.animate(withDuration: uiValue.duration,
                                    delay: 0,
                                    usingSpringWithDamping: CGFloat(uiValue.dampingRatio),
                                    initialSpringVelocity: CGFloat(uiValue.initialVelocity),
-                                   options: []) { [self] () in
-                        view.shapeView.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
+                                   options: []) { () in
+                        view.shapeView.frame = CGRect(x: 0, y: -offset, width: 100, height: 100)
                     }
 
                     let caAnimation = view.shapeView.layer.animation(forKey: "position") as! CASpringAnimation
@@ -196,7 +193,7 @@ class UIAnimationController<RecordingValue> {
                 }
             case .coreAnimation(let caValue, let shouldMimic):
                 if shouldMimic {
-                    previous = mimic(curve: SpringCurve(caValue), isSwiftUI: false, mixStrategy: .noMix)
+                    previous = mimic(curve: SpringCurve(caValue), offset: offset, mixStrategy: .noMix)
                 } else {
                     let animation = CASpringAnimation()
 
@@ -211,7 +208,7 @@ class UIAnimationController<RecordingValue> {
                     let layer = view.shapeView.layer
                     animation.fromValue = (layer.presentation() ?? layer).position
 
-                    let newPosition = CGPoint(x: 50, y: offset ? 150 : 50)
+                    let newPosition = CGPoint(x: 50, y: 50 - offset)
                     animation.toValue = newPosition
 
                     view.shapeView.layer.add(animation, forKey: "spring")
@@ -224,45 +221,58 @@ class UIAnimationController<RecordingValue> {
                     previous = nil
                 }
             case .spring(let springValue):
-                previous = mimic(curve: SpringCurve(springValue), isSwiftUI: true, mixStrategy: .keepVelocity)
+                previous = mimic(curve: SpringCurve(springValue), offset: offset, mixStrategy: .keepVelocity)
             case .interpolatingSpring(let interpolatingSpringValue):
-                previous = mimic(curve: SpringCurve(interpolatingSpringValue), isSwiftUI: true, mixStrategy: .compose)
+                previous = mimic(curve: SpringCurve(interpolatingSpringValue), offset: offset, mixStrategy: .compose)
+            case .keyboard(let shouldMimic):
+                if shouldMimic {
+                    // If directly set animation when receive keyboard notifications,
+                    // the animation will be mixed with system keyboard animation, so dispatch async to
+                    // avoid this behavior
+                    DispatchQueue.main.async { [self] () in
+                        previous = mimic(curve: SpringCurve.makeKeyboardSpring(), offset: offset, mixStrategy: .noMix)
+                    }
+                } else {
+                    // If set frame when receive keyboard will show or hide notifications
+                    // it will be automatically animated
+                    view.shapeView.layer.removeAllAnimations()
+                    view.shapeView.frame = CGRect(x: 0, y: -offset, width: 100, height: 100)
+                    previous = nil
+                }
             }
         } else {
             view.shapeView.layer.removeAllAnimations()
-
-            view.shapeView.frame = CGRect(x: 0, y: offset ? 100 : 0, width: 100, height: 100)
-
+            view.shapeView.frame = CGRect(x: 0, y: -offset, width: 100, height: 100)
             previous = nil
         }
     }
 
-    func mimic(curve: SpringCurve, isSwiftUI: Bool, mixStrategy: MixStrategy) -> (function: MotionFunction, startTime: CFTimeInterval)? {
+    func mimic(curve: SpringCurve, offset: CGFloat, mixStrategy: MixStrategy) -> (function: MotionFunction, startTime: CFTimeInterval)? {
         guard let view = view else { return nil }
 
         let animation = CAKeyframeAnimation()
 
         let layer = view.shapeView.layer
         let fromY = (layer.presentation() ?? layer).position.y
-        let toY: CGFloat = offset ? 150 : 50
+        let toY: CGFloat = 50 - offset
 
         let globalFromY = (layer.presentation() ?? layer).convert(CGPoint.zero, to: nil).y
 
         let function: MotionFunction
         if let previous = previous {
-            let startOffset = CACurrentMediaTime() - previous.startTime
-            print("Start offset \(startOffset)")
+            let startTimeOffset = CACurrentMediaTime() - previous.startTime
+            print("Start offset \(startTimeOffset)")
             print("fromY \(globalFromY)")
             if let animation = view.shapeView.layer.animation(forKey: "keyFrameSpring") as? CAKeyframeAnimation,
-               startOffset <= animation.duration {
+               startTimeOffset <= animation.duration {
                 switch mixStrategy {
                 case .noMix:
                     function = SimpleCurve(curve: curve, from: fromY, to: toY)
                 case .compose:
-                    function = ComposedCurve(previous: previous.function, startOffset: startOffset,
+                    function = ComposedCurve(previous: previous.function, startOffset: startTimeOffset,
                                              curve: curve, to: toY)
                 case .keepVelocity:
-                    function = KeepVelocityCurve(previous: previous.function, startOffset: startOffset,
+                    function = KeepVelocityCurve(previous: previous.function, startOffset: startTimeOffset,
                                                  curve: curve, to: toY)
                 }
             } else {

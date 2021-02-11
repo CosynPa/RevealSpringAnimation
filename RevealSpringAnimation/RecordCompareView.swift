@@ -11,7 +11,7 @@ struct RecordCompareView: View {
     var recorders: Recorders
 
     @Binding var type: SpringType
-    @Binding var offset: Bool
+    @Binding var offset: CGFloat
 
     @ViewBuilder
     var systemView: some View {
@@ -25,17 +25,15 @@ struct RecordCompareView: View {
                     Text("SwiftUI")
                 }
                 .frame(width: 100, height: 100)
-                .offset(y: offset ? -100 : 0)
+                .offset(y: offset)
             }
             .frame(width: 100)
-        case .uikit, .coreAnimation:
+        case .uikit, .coreAnimation, .keyboard:
             UIAnimationView(controller: recorders.uikitController, type: .systemAnimation)
                 .onAppear {
-                    recorders.uikitController.setOffset(offset, animator: nil)
+                    recorders.uikitController.set(offset: offset, animator: nil)
                 }
                 .frame(width: 100)
-        case .keyboard:
-            EmptyView()
         }
     }
 
@@ -52,7 +50,7 @@ struct RecordCompareView: View {
     var compareView: some View {
         UIAnimationView(controller: recorders.mimicController, type: mimicAnimationViewType)
             .onAppear {
-                recorders.mimicController.setOffset(offset, animator: nil)
+                recorders.mimicController.set(offset: offset, animator: nil)
             }
             .frame(width: 100)
     }
@@ -72,13 +70,13 @@ struct RecordCompareView_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            RecordCompareView(recorders: vm, type: .constant(.spring), offset: .constant(false))
+            RecordCompareView(recorders: vm, type: .constant(.spring), offset: .constant(0))
 
-            RecordCompareView(recorders: vm, type: .constant(.spring), offset: .constant(true))
+            RecordCompareView(recorders: vm, type: .constant(.spring), offset: .constant(100))
 
-            RecordCompareView(recorders: vm, type: .constant(.uikit), offset: .constant(false))
+            RecordCompareView(recorders: vm, type: .constant(.uikit), offset: .constant(0))
 
-            RecordCompareView(recorders: vm, type: .constant(.uikit), offset: .constant(true))
+            RecordCompareView(recorders: vm, type: .constant(.uikit), offset: .constant(100))
 
         }
         .previewLayout(.fixed(width: 400, height: 250))
