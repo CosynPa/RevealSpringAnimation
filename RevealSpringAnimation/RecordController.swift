@@ -110,9 +110,17 @@ struct RecordControllerVM {
     }
 
     func onKeyboardHideAnimationStart(info: KeyboardInfo) {
-        if info.animate {
-            transitToStart(newOffset: 0)
+        if parameter.isKeyboard {
+            if info.animate {
+                transitToStart(newOffset: 0)
+            } else {
+                stopAnimation(newOffset: 0)
+            }
         } else {
+            // Can happen when switching type while the keyboard is showing
+            // Don't animate
+            // But setting frame when receiving keyboard notification will automatically
+            // animate, this animation is OK.
             stopAnimation(newOffset: 0)
         }
     }
