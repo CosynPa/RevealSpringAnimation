@@ -166,7 +166,7 @@ class UIAnimationController<RecordingValue> {
                     let response = 2 * CGFloat.pi / sqrt(caAnimation.stiffness / caAnimation.mass)
                     let dampingRatio = caAnimation.damping / 2 / sqrt(caAnimation.stiffness * caAnimation.mass)
 
-                    print("Response \(response), damping ratio: \(dampingRatio)")
+                    print("Response \(response), damping ratio: \(dampingRatio), settling duration: \(caAnimation.settlingDuration)")
 
                     // No mix with system animation
                     previous = nil
