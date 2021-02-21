@@ -262,7 +262,7 @@ class UIAnimationController<RecordingValue> {
             function = SimpleCurve(curve: curve, from: fromY, to: toY)
         }
 
-        let settlingDuration = function.settlingDuration
+        let settlingDuration = min(function.settlingDuration, 3600)
 
         let keyTimes: [Double] = Array(stride(from: 0.0, to: settlingDuration, by: 1 / Double(UIScreen.main.maximumFramesPerSecond)))
         animation.keyTimes = keyTimes

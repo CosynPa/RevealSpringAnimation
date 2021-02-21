@@ -140,7 +140,7 @@ struct SettlingDurationSolver {
     }
 
     static func underDampingSolve(curve: SpringCurve, alpha: Double, epsilon: Double) throws -> Double {
-        assert(curve.dampingRatio < 1.0)
+        assert(0.0 < curve.dampingRatio && curve.dampingRatio < 1.0)
         assert(0 < alpha && alpha < 1)
 
         let omega = curve.omega
@@ -188,8 +188,10 @@ struct SettlingDurationSolver {
         do {
             if curve.dampingRatio > 1 - epsilon {
                 return try Self.criticalOverDampingSolve(curve: curve, alpha: alpha, epsilon: epsilon)
-            } else {
+            } else if curve.dampingRatio > epsilon {
                 return try Self.underDampingSolve(curve: curve, alpha: alpha, epsilon: epsilon)
+            } else {
+                return 1e10
             }
         } catch {
             return 0
