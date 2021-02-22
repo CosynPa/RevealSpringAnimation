@@ -16,6 +16,9 @@
 		7E3BADFF258F0C4E00F5D810 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BADFE258F0C4E00F5D810 /* Assets.xcassets */; };
 		7E3BAE02258F0C4E00F5D810 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E3BAE01258F0C4E00F5D810 /* Preview Assets.xcassets */; };
 		7E3BAE0B258F0D4F00F5D810 /* PropertyRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */; };
+		7E72576225E33FF50076CBE3 /* OmegaSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E72576125E33FF50076CBE3 /* OmegaSolver.swift */; };
+		7E72576625E345B50076CBE3 /* UIKitDurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E72576525E345B50076CBE3 /* UIKitDurationTests.swift */; };
+		7E72576C25E345C30076CBE3 /* SystemUIKitAnimationConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E72576B25E345C30076CBE3 /* SystemUIKitAnimationConverter.swift */; };
 		7EC6EA0A25A60B7A00BD0F48 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC6EA0925A60B7A00BD0F48 /* Either.swift */; };
 		7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */; };
 		7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */; };
@@ -50,6 +53,9 @@
 		7E3BAE01258F0C4E00F5D810 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7E3BAE03258F0C4E00F5D810 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyRecordView.swift; sourceTree = "<group>"; };
+		7E72576125E33FF50076CBE3 /* OmegaSolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OmegaSolver.swift; sourceTree = "<group>"; };
+		7E72576525E345B50076CBE3 /* UIKitDurationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitDurationTests.swift; sourceTree = "<group>"; };
+		7E72576B25E345C30076CBE3 /* SystemUIKitAnimationConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemUIKitAnimationConverter.swift; sourceTree = "<group>"; };
 		7EC6EA0925A60B7A00BD0F48 /* Either.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
 		7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringParameterController.swift; sourceTree = "<group>"; };
 		7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoInvalidatingDisplayLink.swift; sourceTree = "<group>"; };
@@ -113,6 +119,7 @@
 				7E1212CA25AB50260018189A /* RecordCompareView.swift */,
 				7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */,
 				7E3BAE0A258F0D4F00F5D810 /* PropertyRecordView.swift */,
+				7E72576B25E345C30076CBE3 /* SystemUIKitAnimationConverter.swift */,
 				7E3BADFE258F0C4E00F5D810 /* Assets.xcassets */,
 				7E3BAE03258F0C4E00F5D810 /* Info.plist */,
 				7E3BAE00258F0C4E00F5D810 /* Preview Content */,
@@ -135,6 +142,7 @@
 				7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */,
 				7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */,
 				7E1BD37325BDBD9700BD8604 /* MixedCurve.swift */,
+				7E72576125E33FF50076CBE3 /* OmegaSolver.swift */,
 			);
 			path = Math;
 			sourceTree = "<group>";
@@ -146,6 +154,7 @@
 				7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */,
 				7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */,
 				7ED510C925B445B0006F16CC /* DerivativeTests.swift */,
+				7E72576525E345B50076CBE3 /* UIKitDurationTests.swift */,
 				7ED510AC25B42CA9006F16CC /* Info.plist */,
 			);
 			path = RevealSpringAnimationTests;
@@ -254,8 +263,10 @@
 				7ED510C025B43266006F16CC /* SettlingDuratinonSolver.swift in Sources */,
 				7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */,
 				7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */,
+				7E72576225E33FF50076CBE3 /* OmegaSolver.swift in Sources */,
 				7E1BD37425BDBD9700BD8604 /* MixedCurve.swift in Sources */,
 				7E1212CB25AB50260018189A /* RecordCompareView.swift in Sources */,
+				7E72576C25E345C30076CBE3 /* SystemUIKitAnimationConverter.swift in Sources */,
 				7E1212CE25AC09F60018189A /* SpringCurve.swift in Sources */,
 				7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */,
 				7E1BD37A25BE409800BD8604 /* RecordCollector.swift in Sources */,
@@ -272,6 +283,7 @@
 			files = (
 				7ED510AB25B42CA9006F16CC /* NewtonSolverTests.swift in Sources */,
 				7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */,
+				7E72576625E345B50076CBE3 /* UIKitDurationTests.swift in Sources */,
 				7ED510CA25B445B1006F16CC /* DerivativeTests.swift in Sources */,
 				7ED510C625B439D0006F16CC /* SettlingDurationSolverTests.swift in Sources */,
 			);

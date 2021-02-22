@@ -67,7 +67,7 @@ struct SpringCurve {
     }
 
     init(_ p: UIKitSpring) {
-        self.init(response: p.duration, // TODO:
+        self.init(response: 2 * Double.pi / OmegaSolver.omega(parameter: p),
                   dampingRatio: min(1.0, p.dampingRatio),
                   initialVelocity: p.initialVelocity)
     }
