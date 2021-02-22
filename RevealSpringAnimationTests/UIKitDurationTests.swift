@@ -34,6 +34,10 @@ class UIKitDurationTests: XCTestCase {
         XCTAssertEqual(spring.omega, systemSpring.omega, accuracy: 1e-4)
     }
 
+    func testZeroVelocity() {
+        testSolution(parameter: UIKitSpring(duration: 1, dampingRatio: 0.8, initialVelocity: 0))
+    }
+
     func testALot() {
         let durations = [1.0, 3.0]
         let dampingRatios = stride(from: 0.1, to: 1.0, by: 0.1)
