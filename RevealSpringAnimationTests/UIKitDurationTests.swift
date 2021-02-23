@@ -26,19 +26,22 @@ extension SpringCurve {
 }
 
 class UIKitDurationTests: XCTestCase {
-    func testSolution(parameter: UIKitSpring) {
+    func testSolution(parameter: UIKitSpring, compareWithSystem: Bool = true) {
         let spring = SpringCurve(parameter)
         let systemSpring = SystemUIKitAnimationConverter.convert(uiValue: parameter)
 
         XCTAssertEqual(spring.estimatedDuration, parameter.duration, accuracy: 1e-8)
-        XCTAssertEqual(spring.omega, systemSpring.omega, accuracy: 1e-4)
+
+        if compareWithSystem {
+            XCTAssertEqual(spring.omega, systemSpring.omega, accuracy: 1e-4)
+        }
     }
 
     func testZeroVelocity() {
         testSolution(parameter: UIKitSpring(duration: 1, dampingRatio: 0.8, initialVelocity: 0))
     }
 
-    func testALot() {
+    func testNagativeVelocity() {
         let durations = [1.0, 3.0]
         let dampingRatios = stride(from: 0.1, to: 1.0, by: 0.1)
         let v0s = stride(from: -10.0, to: 0, by: 0.2)
@@ -52,7 +55,7 @@ class UIKitDurationTests: XCTestCase {
         }
     }
 
-    // When initial velocity is positive, system API has chaotic behavior, iOS 14.4
+    // When the initial velocity is positive, system API has chaotic behavior, iOS 14.4
     func testChaos() {
         let data: [(zeta: Double, v0: Int, omega: Double)] = [
             (0.1, 210, 4.563081181386087),
@@ -306,7 +309,28 @@ class UIKitDurationTests: XCTestCase {
             let parameter = UIKitSpring(duration: 1 / zeta, dampingRatio: zeta, initialVelocity: v0)
             let systemSpring = SystemUIKitAnimationConverter.convert(uiValue: parameter)
 
+            print("System omega \(systemSpring.omega), my omega \(SpringCurve(parameter).omega)")
             XCTAssertEqual(systemSpring.omega, omega, accuracy: 1e-8)
+        }
+    }
+
+    // The solution omega is found at the minimum point
+    func testMinimum() {
+        let uiValue = UIKitSpring(duration: 2, dampingRatio: 0.5, initialVelocity: 1.9039496253244579)
+        testSolution(parameter: uiValue, compareWithSystem: false)
+    }
+
+    func testPositiveVelocity() {
+        let durations = [1.0, 3.0]
+        let dampingRatios = stride(from: 0.1, to: 1.0, by: 0.1)
+        let v0s = stride(from: 0.0, to: 100.0, by: 0.2)
+
+        for d in durations {
+            for zeta in dampingRatios {
+                for v0 in v0s {
+                    testSolution(parameter: UIKitSpring(duration: d, dampingRatio: zeta, initialVelocity: v0), compareWithSystem: false)
+                }
+            }
         }
     }
 }

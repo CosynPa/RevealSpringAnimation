@@ -26,21 +26,59 @@ struct OmegaSolver {
 
         if abs(u) < epsilon {
             return -log(c) / E
-        } else if u < 0 {
+        } else {
             let f = { (omega: Double) -> Double in
-                (u / omega - 1) * exp(-E * omega) + c
+                (u / omega - 1) * exp(-E * omega)
             }
 
-            // Derivative always positive, the second order derivative always negative, can use Newton solver
-            // ddf = (2u / omega^3 + 2EU / omega^2 + E^2 u / omega - E^2) exp(-E omega)
             let df = { (omega: Double) -> Double in
                 (-u / omega / omega - E * u / omega + E) * exp(-E * omega)
             }
 
-            return try NewtonSolver.solve(f: f, df: df, x0: 1.0, epsilon: epsilon)
-        } else {
-            // TODO
-            return 0
+            // ddf = (2u / omega^3 + 2EU / omega^2 + E^2 u / omega - E^2) exp(-E omega)
+
+            if u < 0 {
+                // Derivative always positive, the second order derivative always negative, can use Newton solver
+                return try NewtonSolver.solve(f: { omega in f(omega) + c }, df: df, x0: 1.0, epsilon: epsilon)
+            } else {
+                let minimumPoint = 1 / (-E / 2 + sqrt(E * E / 4 + E / u))
+
+                if abs(f(minimumPoint) + c) < epsilon {
+                    return minimumPoint
+                } else if f(minimumPoint) < -c {
+                    func inflectionPoint() -> Double {
+                        let a = 2 * u
+                        let b = 2 * E * u
+                        let c = E * E * u
+                        let d = -E * E
+
+                        do {
+                            let x = try CubicEquation.singleRoot(a: a, b: b, c: c, d: d)
+                            return 1 / x
+                        } catch {
+                            print(error) // Should not happen
+                            return 1
+                        }
+                    }
+
+                    let inflection = inflectionPoint()
+
+                    if minimumPoint > inflection {
+                        // Should not happend
+                        print("minimumPoint \(minimumPoint) greater than inflection \(inflection)")
+                    }
+
+                    return try NewtonSolver.solve(f: { omega in f(omega) + c }, df: df, x0: inflectionPoint(), epsilon: epsilon)
+                } else {
+                    var x0 = u // f(u) = 0
+
+                    while f(x0) <= c {
+                        x0 /= 2.0
+                    }
+
+                    return try NewtonSolver.solve(f: { omega in f(omega) - c }, df: df, x0: x0, epsilon: epsilon)
+                }
+            }
         }
     }
 
