@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7E1212CB25AB50260018189A /* RecordCompareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1212CA25AB50260018189A /* RecordCompareView.swift */; };
 		7E1212CE25AC09F60018189A /* SpringCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1212CD25AC09F50018189A /* SpringCurve.swift */; };
+		7E13151B25E4C0F400850D2D /* CubicEquation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E13151A25E4C0F300850D2D /* CubicEquation.swift */; };
+		7E13151F25E4C56F00850D2D /* CubicEquationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E13151E25E4C56F00850D2D /* CubicEquationTests.swift */; };
 		7E1BD37425BDBD9700BD8604 /* MixedCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1BD37325BDBD9700BD8604 /* MixedCurve.swift */; };
 		7E1BD37A25BE409800BD8604 /* RecordCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1BD37925BE409700BD8604 /* RecordCollector.swift */; };
 		7E3BADFB258F0C4300F5D810 /* RevealSpringAnimationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3BADFA258F0C4300F5D810 /* RevealSpringAnimationApp.swift */; };
@@ -44,6 +46,8 @@
 /* Begin PBXFileReference section */
 		7E1212CA25AB50260018189A /* RecordCompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCompareView.swift; sourceTree = "<group>"; };
 		7E1212CD25AC09F50018189A /* SpringCurve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringCurve.swift; sourceTree = "<group>"; };
+		7E13151A25E4C0F300850D2D /* CubicEquation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubicEquation.swift; sourceTree = "<group>"; };
+		7E13151E25E4C56F00850D2D /* CubicEquationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CubicEquationTests.swift; sourceTree = "<group>"; };
 		7E1BD37325BDBD9700BD8604 /* MixedCurve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedCurve.swift; sourceTree = "<group>"; };
 		7E1BD37925BE409700BD8604 /* RecordCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCollector.swift; sourceTree = "<group>"; };
 		7E3BADF7258F0C4300F5D810 /* RevealSpringAnimation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RevealSpringAnimation.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,6 +147,7 @@
 				7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */,
 				7E1BD37325BDBD9700BD8604 /* MixedCurve.swift */,
 				7E72576125E33FF50076CBE3 /* OmegaSolver.swift */,
+				7E13151A25E4C0F300850D2D /* CubicEquation.swift */,
 			);
 			path = Math;
 			sourceTree = "<group>";
@@ -155,6 +160,7 @@
 				7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */,
 				7ED510C925B445B0006F16CC /* DerivativeTests.swift */,
 				7E72576525E345B50076CBE3 /* UIKitDurationTests.swift */,
+				7E13151E25E4C56F00850D2D /* CubicEquationTests.swift */,
 				7ED510AC25B42CA9006F16CC /* Info.plist */,
 			);
 			path = RevealSpringAnimationTests;
@@ -269,6 +275,7 @@
 				7E72576C25E345C30076CBE3 /* SystemUIKitAnimationConverter.swift in Sources */,
 				7E1212CE25AC09F60018189A /* SpringCurve.swift in Sources */,
 				7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */,
+				7E13151B25E4C0F400850D2D /* CubicEquation.swift in Sources */,
 				7E1BD37A25BE409800BD8604 /* RecordCollector.swift in Sources */,
 				7EC6EA0A25A60B7A00BD0F48 /* Either.swift in Sources */,
 				7ED5109E25B2FE2C006F16CC /* NewtonSolver.swift in Sources */,
@@ -285,6 +292,7 @@
 				7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */,
 				7E72576625E345B50076CBE3 /* UIKitDurationTests.swift in Sources */,
 				7ED510CA25B445B1006F16CC /* DerivativeTests.swift in Sources */,
+				7E13151F25E4C56F00850D2D /* CubicEquationTests.swift in Sources */,
 				7ED510C625B439D0006F16CC /* SettlingDurationSolverTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
