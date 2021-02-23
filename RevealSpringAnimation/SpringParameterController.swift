@@ -76,6 +76,14 @@ struct CASpring {
     var stiffness: Double = 1.0
     var damping: Double = 1.0
     var initialVelocity: Double = 0.0
+
+    var omega: Double {
+        sqrt(stiffness / mass)
+    }
+
+    var dampingRatio: Double {
+        min(1.0, damping / 2 / sqrt(stiffness * mass))
+    }
 }
 
 // The parameters of the whole controller, can be one of the four types
