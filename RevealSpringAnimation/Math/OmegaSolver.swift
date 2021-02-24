@@ -28,7 +28,12 @@ struct OmegaSolver {
         // The equation becomes | u / omega - 1 | * exp(-E * omega) = c
 
         if abs(u) < epsilon {
-            return -log(c) / E
+            if c < 1 {
+                return -log(c) / E
+            } else {
+                // zeta is too small, c2 is too small, we don't know the system formula for this case
+                return 10000
+            }
         } else {
             let f = { (omega: Double) -> Double in
                 (u / omega - 1) * exp(-E * omega)
