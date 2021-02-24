@@ -97,6 +97,61 @@ struct OmegaSolver {
         }
     }
 
+    static func criticalDampingSolve(parameter: UIKitSpring, epsilon: Double) throws -> Double {
+        let alpha = 0.001
+
+        let D = min(max(parameter.duration, Self.minDuration), Self.maxDuration)
+        let zeta = parameter.dampingRatio
+        let v0 = parameter.initialVelocity
+
+        assert(abs(zeta - 1) < epsilon)
+
+        let a = -1 + v0 * D
+
+        // w = D * omega, solve |f(w)| = alpha
+        let f = { (w: Double) -> Double in
+            (a - w) * exp(-w)
+        }
+
+        let df = { (w: Double) -> Double in
+            (w - a - 1) * exp(-w)
+        }
+
+        // ddf = (-w + a + 2) * exp(-w)
+
+        let minimumPoint = a + 1
+        let inflectionPoint = a + 2
+
+        let w_solution: Double
+
+        if minimumPoint <= 0 {
+            assert(alpha < 1)
+            // min f(w) = f(0) = a < -1 < -alpha, has solution in (0, +inf)
+            w_solution = try NewtonSolver.solve(f: { w in f(w) + alpha }, df: df, x0: inflectionPoint)
+        } else {
+            let minValue = f(minimumPoint) // = -exp(-a -1)
+
+            if abs(minValue + alpha) < epsilon {
+                w_solution = minimumPoint
+            } else if minValue < -alpha {
+                w_solution = try NewtonSolver.solve(f: { w in f(w) + alpha }, df: df, x0: inflectionPoint)
+            } else {
+                assert(alpha < -log(alpha) - 1, "Unsupported alpha \(alpha)")
+                // f(minimumPoint) = -exp(-a - 1) > -alpha, implies a > -ln(alpha) - 1
+                // max f(w) = f(0) = a > -ln(alpha) - 1 > alpha, has solution in (0, a)
+
+                var x0 = a
+                while f(x0) < alpha {
+                    x0 /= 2
+                }
+
+                w_solution = try NewtonSolver.solve(f: {w in f(w) - alpha }, df: df, x0: x0)
+            }
+        }
+
+        return w_solution / D
+    }
+
     static func omega(parameter: UIKitSpring, epsilon: Double = 1e-8) -> Double {
         let zeta = parameter.dampingRatio
 
@@ -106,10 +161,10 @@ struct OmegaSolver {
             } else if zeta < 1 - epsilon {
                 return try underDampingSolve(parameter: parameter, epsilon: epsilon)
             } else {
-                // TODO
-                return 1
+                return try criticalDampingSolve(parameter: parameter, epsilon: epsilon)
             }
         } catch {
+            print("Solve omega error \(error)")
             return 1
         }
     }

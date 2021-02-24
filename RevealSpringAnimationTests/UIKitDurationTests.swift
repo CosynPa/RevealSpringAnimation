@@ -27,11 +27,28 @@ extension SpringCurve {
 
 class UIKitDurationTests: XCTestCase {
     func testSolution(parameter: UIKitSpring, compareWithSystem: Bool = true) {
+        assert(parameter.dampingRatio < 1)
+
         let spring = SpringCurve(parameter)
         let systemSpring = SystemUIKitAnimationConverter.convert(uiValue: parameter)
 
         let expectedDuration = min(max(parameter.duration, OmegaSolver.minDuration), OmegaSolver.maxDuration)
         XCTAssertEqual(spring.estimatedDuration, expectedDuration, accuracy: 1e-8)
+
+        if compareWithSystem {
+            XCTAssertEqual(spring.omega / systemSpring.omega, 1.0, accuracy: 1e-3)
+        }
+    }
+
+    func testCriticalDampingSolution(parameter: UIKitSpring, compareWithSystem: Bool = true) {
+        assert(parameter.dampingRatio == 1)
+
+        let spring = SpringCurve(parameter)
+        let systemSpring = SystemUIKitAnimationConverter.convert(uiValue: parameter)
+
+        let clampedDuration = min(max(parameter.duration, OmegaSolver.minDuration), OmegaSolver.maxDuration)
+
+        XCTAssertEqual(abs(spring.curveFunc(clampedDuration) - 1), 0.001, accuracy: 1e-8)
 
         if compareWithSystem {
             XCTAssertEqual(spring.omega / systemSpring.omega, 1.0, accuracy: 1e-3)
@@ -352,6 +369,18 @@ class UIKitDurationTests: XCTestCase {
                 for v0 in v0s {
                     testSolution(parameter: UIKitSpring(duration: d, dampingRatio: zeta, initialVelocity: v0))
                 }
+            }
+        }
+    }
+
+    func testCriticalDamping() {
+        let durations = [0.003, 0.009, 1.0, 2.0, 3.0, 5.0, 11.0, 20.0, 100.0]
+        let v0s = stride(from: -10.0, to: 10.0, by: 0.1)
+
+        for d in durations {
+            for v0 in v0s {
+                testCriticalDampingSolution(parameter: UIKitSpring(duration: d, dampingRatio: 1, initialVelocity: v0),
+                                            compareWithSystem: false)
             }
         }
     }
