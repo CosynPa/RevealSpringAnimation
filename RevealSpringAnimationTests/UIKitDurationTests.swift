@@ -405,14 +405,45 @@ class UIKitDurationTests: XCTestCase {
         }
     }
 
+    func testCriticalDampingDurationBoundary() {
+        var durations = [0.003, 0.009]
+        var v0s = stride(from: -10.0, to: 10.0, by: 0.5)
+
+        for d in durations {
+            for v0 in v0s {
+                testCriticalDampingSolution(parameter: UIKitSpring(duration: d, dampingRatio: 1, initialVelocity: v0))
+            }
+        }
+
+        durations = [11.0, 20.0, 100.0]
+        v0s = stride(from: -0.1, to: 0.1, by: 0.01)
+
+        for d in durations {
+            for v0 in v0s {
+                testCriticalDampingSolution(parameter: UIKitSpring(duration: d, dampingRatio: 1, initialVelocity: v0))
+            }
+        }
+    }
+
     func testCriticalDamping() {
-        let durations = [0.003, 0.009, 1.0, 2.0, 3.0, 5.0, 11.0, 20.0, 100.0]
-        let v0s = stride(from: -10.0, to: 10.0, by: 0.1)
+        let durations = [1.0, 2.0]
+        let v0s = stride(from: -1.0, to: 1.0, by: 0.1)
+
+        for d in durations {
+            for v0 in v0s {
+                testCriticalDampingSolution(parameter: UIKitSpring(duration: d, dampingRatio: 1, initialVelocity: v0))
+            }
+        }
+    }
+
+    func testMoreCriticalDamping() {
+        let durations = stride(from: 0.5, to: 20, by: 0.5)
+        let v0s = stride(from: -100.0, to: 100.0, by: 0.1)
 
         for d in durations {
             for v0 in v0s {
                 testCriticalDampingSolution(parameter: UIKitSpring(duration: d, dampingRatio: 1, initialVelocity: v0),
-                                            compareWithSystem: true)
+                                            compareWithSystem: false)
             }
         }
     }

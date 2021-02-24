@@ -127,7 +127,12 @@ struct OmegaSolver {
         if minimumPoint <= 0 {
             assert(alpha < 1)
             // min f(w) = f(0) = a < -1 < -alpha, has solution in (0, +inf)
-            w_solution = try NewtonSolver.solve(f: { w in f(w) + alpha }, df: df, x0: inflectionPoint)
+            if inflectionPoint > 0 {
+                w_solution = try NewtonSolver.solve(f: { w in f(w) + alpha }, df: df, x0: inflectionPoint)
+            } else {
+                // Theoretical we can still use inflectionPoint as x0, but that number may be too small causing +inf in calculation.
+                w_solution = try NewtonSolver.solve(f: { w in f(w) + alpha }, df: df, x0: 0)
+            }
         } else {
             let minValue = f(minimumPoint) // = -exp(-a -1)
 
