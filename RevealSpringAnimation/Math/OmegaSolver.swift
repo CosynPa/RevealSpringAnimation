@@ -8,11 +8,14 @@
 import Foundation
 
 struct OmegaSolver {
+    static let minDuration = 0.01
+    static let maxDuration = 10.0
+
     // Solve |c2| * exp(a * t) = 0.001
     static func underDampingSolve(parameter: UIKitSpring, epsilon: Double) throws -> Double {
         let alpha = 0.001
 
-        let D = parameter.duration
+        let D = min(max(parameter.duration, Self.minDuration), Self.maxDuration)
         let zeta = parameter.dampingRatio
         let v0 = parameter.initialVelocity
 

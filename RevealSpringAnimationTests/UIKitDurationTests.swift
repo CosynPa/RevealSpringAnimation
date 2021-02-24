@@ -30,10 +30,11 @@ class UIKitDurationTests: XCTestCase {
         let spring = SpringCurve(parameter)
         let systemSpring = SystemUIKitAnimationConverter.convert(uiValue: parameter)
 
-        XCTAssertEqual(spring.estimatedDuration, parameter.duration, accuracy: 1e-8)
+        let expectedDuration = min(max(parameter.duration, OmegaSolver.minDuration), OmegaSolver.maxDuration)
+        XCTAssertEqual(spring.estimatedDuration, expectedDuration, accuracy: 1e-8)
 
         if compareWithSystem {
-            XCTAssertEqual(spring.omega, systemSpring.omega, accuracy: 1e-4)
+            XCTAssertEqual(spring.omega / systemSpring.omega, 1.0, accuracy: 1e-3)
         }
     }
 
@@ -328,7 +329,7 @@ class UIKitDurationTests: XCTestCase {
     }
 
     func testPositiveVelocity() {
-        let durations = [1.0, 3.0]
+        let durations = [1.0, 3.0, 5.0, 10.0]
         let dampingRatios = stride(from: 0.1, to: 1.0, by: 0.1)
         let v0s = stride(from: 0.0, to: 100.0, by: 0.2)
 
@@ -336,6 +337,20 @@ class UIKitDurationTests: XCTestCase {
             for zeta in dampingRatios {
                 for v0 in v0s {
                     testSolution(parameter: UIKitSpring(duration: d, dampingRatio: zeta, initialVelocity: v0), compareWithSystem: false)
+                }
+            }
+        }
+    }
+
+    func testDurationBoundary() {
+        let durations = [0.003, 0.009, 11.0, 20.0, 100.0]
+        let dampingRatios = stride(from: 0.1, to: 1.0, by: 0.1)
+        let v0s = stride(from: -10.0, to: 10.0, by: 0.5)
+
+        for d in durations {
+            for zeta in dampingRatios {
+                for v0 in v0s {
+                    testSolution(parameter: UIKitSpring(duration: d, dampingRatio: zeta, initialVelocity: v0))
                 }
             }
         }
