@@ -41,6 +41,13 @@ class UIKitDurationTests: XCTestCase {
         testSolution(parameter: UIKitSpring(duration: 1, dampingRatio: 0.8, initialVelocity: 0))
     }
 
+    // The staring point of Newton's method can't an arbitrary point
+    func testNagativeVelocityStartingPoint() {
+        for v0 in stride(from:-0.4, through: -0.1, by: 0.1) {
+            testSolution(parameter: UIKitSpring(duration: 20, dampingRatio: 0.5, initialVelocity: v0), compareWithSystem: false)
+        }
+    }
+
     func testNagativeVelocity() {
         let durations = [1.0, 3.0]
         let dampingRatios = stride(from: 0.1, to: 1.0, by: 0.1)

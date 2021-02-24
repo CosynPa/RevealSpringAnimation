@@ -39,7 +39,14 @@ struct OmegaSolver {
 
             if u < 0 {
                 // Derivative always positive, the second order derivative always negative, can use Newton solver
-                return try NewtonSolver.solve(f: { omega in f(omega) + c }, df: df, x0: 1.0, epsilon: epsilon)
+
+                var x0 = 1.0
+
+                while f(x0) >= -c {
+                    x0 /= 2.0
+                }
+
+                return try NewtonSolver.solve(f: { omega in f(omega) + c }, df: df, x0: x0, epsilon: epsilon)
             } else {
                 let minimumPoint = 1 / (-E / 2 + sqrt(E * E / 4 + E / u))
 
