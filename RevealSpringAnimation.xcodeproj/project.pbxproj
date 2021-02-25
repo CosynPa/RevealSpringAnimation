@@ -26,7 +26,6 @@
 		7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */; };
 		7ED5109E25B2FE2C006F16CC /* NewtonSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED5109D25B2FE2C006F16CC /* NewtonSolver.swift */; };
 		7ED510AB25B42CA9006F16CC /* NewtonSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */; };
-		7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */; };
 		7ED510C025B43266006F16CC /* SettlingDuratinonSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */; };
 		7ED510C625B439D0006F16CC /* SettlingDurationSolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */; };
 		7ED510CA25B445B1006F16CC /* DerivativeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED510C925B445B0006F16CC /* DerivativeTests.swift */; };
@@ -67,7 +66,6 @@
 		7ED510A825B42CA8006F16CC /* RevealSpringAnimationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RevealSpringAnimationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewtonSolverTests.swift; sourceTree = "<group>"; };
 		7ED510AC25B42CA9006F16CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinarySearchSolverTests.swift; sourceTree = "<group>"; };
 		7ED510BF25B43266006F16CC /* SettlingDuratinonSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettlingDuratinonSolver.swift; sourceTree = "<group>"; };
 		7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettlingDurationSolverTests.swift; sourceTree = "<group>"; };
 		7ED510C925B445B0006F16CC /* DerivativeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivativeTests.swift; sourceTree = "<group>"; };
@@ -156,7 +154,6 @@
 			isa = PBXGroup;
 			children = (
 				7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */,
-				7ED510B425B42E92006F16CC /* BinarySearchSolverTests.swift */,
 				7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */,
 				7ED510C925B445B0006F16CC /* DerivativeTests.swift */,
 				7E72576525E345B50076CBE3 /* UIKitDurationTests.swift */,
@@ -289,7 +286,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7ED510AB25B42CA9006F16CC /* NewtonSolverTests.swift in Sources */,
-				7ED510B525B42E92006F16CC /* BinarySearchSolverTests.swift in Sources */,
 				7E72576625E345B50076CBE3 /* UIKitDurationTests.swift in Sources */,
 				7ED510CA25B445B1006F16CC /* DerivativeTests.swift in Sources */,
 				7E13151F25E4C56F00850D2D /* CubicEquationTests.swift in Sources */,
