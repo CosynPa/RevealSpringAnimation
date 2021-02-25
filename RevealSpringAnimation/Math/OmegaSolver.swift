@@ -166,7 +166,10 @@ struct OmegaSolver {
             } else if zeta < 1 - epsilon {
                 return try underDampingSolve(parameter: parameter, epsilon: epsilon)
             } else {
-                return try criticalDampingSolve(parameter: parameter, epsilon: epsilon)
+                // UIKit API doesn't allow damping ratio that is greater than 1
+                var OneDampingRatio = parameter
+                OneDampingRatio.dampingRatio = 1
+                return try criticalDampingSolve(parameter: OneDampingRatio, epsilon: epsilon)
             }
         } catch {
             print("Solve omega error \(error)")
