@@ -236,13 +236,10 @@ class UIAnimationController<RecordingValue> {
         let fromY = (layer.presentation() ?? layer).position.y
         let toY: CGFloat = 50 - offset
 
-        let globalFromY = (layer.presentation() ?? layer).convert(CGPoint.zero, to: nil).y
-
         let function: MotionFunction
         if let previous = previous {
             let startTimeOffset = CACurrentMediaTime() - previous.startTime
             print("Start offset \(startTimeOffset)")
-            print("fromY \(globalFromY)")
             if let animation = view.shapeView.layer.animation(forKey: "keyFrameSpring") as? CAKeyframeAnimation,
                startTimeOffset <= animation.duration {
                 switch mixStrategy {
