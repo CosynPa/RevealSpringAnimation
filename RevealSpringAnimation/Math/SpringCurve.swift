@@ -105,6 +105,7 @@ struct SpringCurve {
             let b = omega * sqrt(1 - zeta * zeta)
             let c2 = (v0 + a) / b
             let theta = atan(c2)
+            // Alternatively y = (-cos(b * t) + c2 * sin(b * t)) * exp(a * t)
             y = sqrt(1 + c2 * c2) * exp(a * t) * cos(b * t + theta + Double.pi)
         }
 

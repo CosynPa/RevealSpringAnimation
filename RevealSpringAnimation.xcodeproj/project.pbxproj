@@ -21,6 +21,7 @@
 		7E72576225E33FF50076CBE3 /* OmegaSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E72576125E33FF50076CBE3 /* OmegaSolver.swift */; };
 		7E72576625E345B50076CBE3 /* UIKitDurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E72576525E345B50076CBE3 /* UIKitDurationTests.swift */; };
 		7E72576C25E345C30076CBE3 /* SystemUIKitAnimationConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E72576B25E345C30076CBE3 /* SystemUIKitAnimationConverter.swift */; };
+		7EC3DD2C25E7D37C003ACD8C /* AlternativeFormulaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC3DD2B25E7D37C003ACD8C /* AlternativeFormulaTests.swift */; };
 		7EC6EA0A25A60B7A00BD0F48 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC6EA0925A60B7A00BD0F48 /* Either.swift */; };
 		7ECF45C5259DEA17001F9BA4 /* SpringParameterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */; };
 		7ECF45D125A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */; };
@@ -59,6 +60,7 @@
 		7E72576125E33FF50076CBE3 /* OmegaSolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OmegaSolver.swift; sourceTree = "<group>"; };
 		7E72576525E345B50076CBE3 /* UIKitDurationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitDurationTests.swift; sourceTree = "<group>"; };
 		7E72576B25E345C30076CBE3 /* SystemUIKitAnimationConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemUIKitAnimationConverter.swift; sourceTree = "<group>"; };
+		7EC3DD2B25E7D37C003ACD8C /* AlternativeFormulaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternativeFormulaTests.swift; sourceTree = "<group>"; };
 		7EC6EA0925A60B7A00BD0F48 /* Either.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
 		7ECF45C4259DEA17001F9BA4 /* SpringParameterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringParameterController.swift; sourceTree = "<group>"; };
 		7ECF45D025A060FA001F9BA4 /* AutoInvalidatingDisplayLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoInvalidatingDisplayLink.swift; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 		7ED510A925B42CA9006F16CC /* RevealSpringAnimationTests */ = {
 			isa = PBXGroup;
 			children = (
+				7EC3DD2B25E7D37C003ACD8C /* AlternativeFormulaTests.swift */,
 				7ED510AA25B42CA9006F16CC /* NewtonSolverTests.swift */,
 				7ED510C525B439D0006F16CC /* SettlingDurationSolverTests.swift */,
 				7ED510C925B445B0006F16CC /* DerivativeTests.swift */,
@@ -285,6 +288,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7EC3DD2C25E7D37C003ACD8C /* AlternativeFormulaTests.swift in Sources */,
 				7ED510AB25B42CA9006F16CC /* NewtonSolverTests.swift in Sources */,
 				7E72576625E345B50076CBE3 /* UIKitDurationTests.swift in Sources */,
 				7ED510CA25B445B1006F16CC /* DerivativeTests.swift in Sources */,
