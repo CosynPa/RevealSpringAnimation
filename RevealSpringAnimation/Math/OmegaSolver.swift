@@ -11,7 +11,7 @@ struct OmegaSolver {
     static let minDuration = 0.01
     static let maxDuration = 10.0
 
-    // Solve |c2| * exp(a * t) = 0.001
+    // Solve |c2| * exp(a * t) = 0.001 to find omega
     static func underDampingSolve(parameter: UIKitSpring, epsilon: Double) throws -> Double {
         let alpha = 0.001
 
@@ -97,6 +97,7 @@ struct OmegaSolver {
         }
     }
 
+    // Solve |-1 + (v0 - omega) * t| * exp(-omega * t) = 0.001 to find omega
     static func criticalDampingSolve(parameter: UIKitSpring, epsilon: Double) throws -> Double {
         let alpha = 0.001
 
