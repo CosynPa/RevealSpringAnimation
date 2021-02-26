@@ -90,7 +90,7 @@ struct SpringCurve {
         let zeta = dampingRatio
 
         let y: Double
-        if zeta == 1.0 {
+        if abs(zeta - 1.0) < 1e-8 {
             let c1 = -1.0
             let c2 = v0 - omega
             y = (c1 + c2 * t) * exp(-omega * t)
