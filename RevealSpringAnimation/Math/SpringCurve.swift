@@ -59,8 +59,12 @@ struct SpringCurve {
     }
 
     init(_ p: InterpolatingSpring) {
-        let response = 2 * Double.pi / sqrt(p.stiffness / max(1e-5, p.mass))
-        let dampingRatio = min(1.0, p.damping / 2 / sqrt(p.stiffness * p.mass))
+        let stiffness = max(1e-5, p.stiffness)
+        let mass = max(1e-5, p.mass)
+        let damping = max(0.0, p.damping)
+
+        let response = 2 * Double.pi / sqrt(stiffness / mass)
+        let dampingRatio = min(1.0, damping / 2 / sqrt(stiffness * mass))
         self.init(response: response,
                   dampingRatio: dampingRatio,
                   initialVelocity: p.initialVelocity)
@@ -73,7 +77,7 @@ struct SpringCurve {
     }
 
     init(_ p: CASpring) {
-        let response = 2 * Double.pi / sqrt(p.stiffness / max(1e-5, p.mass))
+        let response = 2 * Double.pi / sqrt(p.stiffness / p.mass)
         var dampingRatio = p.damping / 2 / sqrt(p.stiffness * p.mass)
         dampingRatio = min(1.0, dampingRatio)
         self.init(response: response,

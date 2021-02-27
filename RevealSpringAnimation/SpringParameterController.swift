@@ -72,10 +72,32 @@ struct UIKitSpring {
 
 // CASpringAnimation API parameters
 struct CASpring {
-    var mass: Double = 1.0
-    var stiffness: Double = 1.0
-    var damping: Double = 1.0
+    var _mass: Double = 1.0
+    var mass: Double {
+        set { _mass = newValue }
+        get { _mass > 0 ? _mass : 1.0 }
+    }
+
+    var _stiffness: Double = 100.0
+    var stiffness: Double {
+        set { _stiffness = newValue }
+        get { _stiffness > 0 ? _stiffness : 100.0 }
+    }
+
+    var _damping: Double = 10.0
+    var damping: Double {
+        set { _damping = newValue }
+        get { _damping >= 0 ? _damping : 10.0 }
+    }
+
     var initialVelocity: Double = 0.0
+
+    init(mass: Double = 1, stiffness: Double = 100, damping: Double = 10, initialVelocity: Double = 0) {
+        _mass = mass
+        _stiffness = stiffness
+        _damping = damping
+        self.initialVelocity = initialVelocity
+    }
 
     var omega: Double {
         sqrt(stiffness / mass)
@@ -130,7 +152,7 @@ struct MultiSpringParameterEdit: DynamicProperty {
     @State fileprivate var springValue = Spring()
     @State fileprivate var interpolatingSpringValue = InterpolatingSpring()
     @State fileprivate var uikitValue = UIKitSpring()
-    @State fileprivate var caValue = CASpring()
+    @State fileprivate var caValue = CASpring(stiffness: 1, damping: 1)
 }
 
 struct MultiSpringParameterController: View {
