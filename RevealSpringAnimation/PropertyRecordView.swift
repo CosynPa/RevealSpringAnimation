@@ -218,6 +218,10 @@ class UIAnimationController<RecordingValue> {
                     view.shapeView.layer.removeAllAnimations()
                     view.shapeView.frame = CGRect(x: 0, y: -offset, width: 100, height: 100)
                     previous = nil
+
+                    if let caAnimation = view.shapeView.layer.animation(forKey: "position") as? CASpringAnimation {
+                        print("Keyboard mass \(caAnimation.mass), stiffness: \(caAnimation.stiffness), damping: \(caAnimation.damping) initialVelocity \(caAnimation.initialVelocity); settling duration: \(caAnimation.settlingDuration)")
+                    }
                 }
             }
         } else {
